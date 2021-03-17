@@ -49,11 +49,12 @@ namespace App05MonoGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            backgroundImage = Content.Load<Texture2D>("GrassTexture");
+           // backgroundImage = Content.Load<Texture2D>("GrassTexture");
 
             Texture2D crabImage = Content.Load<Texture2D>("crab2");
 
             crabSprite = new Sprite(crabImage, 100, 500);
+            crabSprite.Scale = 0.5f;
         }
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace App05MonoGame
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
+//            spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
             crabSprite.Draw(spriteBatch);
 
             spriteBatch.End();

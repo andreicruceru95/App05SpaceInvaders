@@ -7,6 +7,7 @@ namespace App05MonoGame.Sprites
 {
     public class Sprite: ICloneable
     {
+        // Single Image
         public Texture2D Image { get; set; }
 
         public Vector2 Position { get; set; }
@@ -14,36 +15,11 @@ namespace App05MonoGame.Sprites
         // A rectangle limiting where the sprite can move
         public Rectangle Boundary { get; set; }
 
-        public Vector2 StartPosition { get; set; }
-
-        // Point around which the sprite rotates
-        public Vector2 Origin
-        {
-            get
-            {
-                if (Image == null)
-                    return Vector2.Zero;
-                else
-                    return new Vector2(Position.X - Width / 2,
-                                        Position.Y - Height / 2);
-            }
-        }
-
-        // Properties
-        public int Speed { get; set; }
+        public float Speed { get; set; }
 
         public Vector2 Direction { get; set; }
 
-        public Color Color = Color.White;
-
-
-        public float Rotation = 0f;
-
-        public float RotationSpeed = 0f;
-
         public float Scale = 1f;
-
-        public SpriteEffects SpriteEffect;
 
         public SpriteFont TextFont { get; set; }
 
@@ -92,7 +68,6 @@ namespace App05MonoGame.Sprites
         {
             Image = image;
             Position = new Vector2(x, y);
-            StartPosition = Position;
 
             Direction = new Vector2(1, 0);
             Speed = 200;
@@ -102,13 +77,6 @@ namespace App05MonoGame.Sprites
             IsActive = true;
 
             Scale = 2;
-        }
-
-
-        public void ResetPosition()
-        {
-            Position = StartPosition;
-            Speed = 0;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -146,14 +114,14 @@ namespace App05MonoGame.Sprites
                 ((int)Position.X, (int)Position.Y, Width, Height);
 
 
-            spriteBatch.Draw(Image, BoundingBox, Color.White);
+            //spriteBatch.Draw(Image, BoundingBox, Color.White);
 
-            //spriteBatch.Draw
-            //    (Image,
-            //     Position,
-            //     null,
-            //     Color.White, Rotation, Origin,
-            //     Scale, SpriteEffect, 10f);
+            spriteBatch.Draw
+                (Image,
+                 Position,
+                 null,
+                 Color.White, 0, Vector2.Zero,
+                 Scale, SpriteEffects.None, 1);
         }
 
         public virtual object Clone()
