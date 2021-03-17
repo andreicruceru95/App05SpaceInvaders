@@ -47,7 +47,7 @@ namespace App05MonoGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //backgroundImage = Content.Load<Texture2D>("grass720p");
+            backgroundImage = Content.Load<Texture2D>("GrassTexture");
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace App05MonoGame
 
             spriteBatch.Begin();
 
-            //spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
+            spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);
