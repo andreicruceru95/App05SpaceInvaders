@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -29,6 +29,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Managers\" />
-    <Folder Include="Sprites\" />
   </ItemGroup>
 </Project>
