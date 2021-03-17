@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using App05MonoGame.Sprites;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,8 +17,9 @@ namespace App05MonoGame
         private GraphicsDeviceManager graphicsManager;
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
-        private Texture2D backgroundImage;
 
+        private Texture2D backgroundImage;
+        private Sprite crabSprite;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -48,6 +50,10 @@ namespace App05MonoGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             backgroundImage = Content.Load<Texture2D>("GrassTexture");
+
+            Texture2D crabImage = Content.Load<Texture2D>("crab2");
+
+            crabSprite = new Sprite(crabImage, 100, 500);
         }
 
         /// <summary>
@@ -63,6 +69,8 @@ namespace App05MonoGame
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
             // TODO: Add your update logic here
+
+            crabSprite.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -81,6 +89,7 @@ namespace App05MonoGame
             spriteBatch.Begin();
 
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
+            crabSprite.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
