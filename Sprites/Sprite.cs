@@ -18,6 +18,14 @@ namespace App05MonoGame.Sprites
         // Speed = 60 is 1 Pixel/second
         public float Speed { get; set; }
 
+        public Vector2 Origin
+        {
+            get 
+            {
+                return new Vector2 (Width / 2, Height / 2);
+            }
+        }
+
         public float Rotation { get; set; }
 
         public float RotationSpeed { get; set; }
@@ -36,12 +44,12 @@ namespace App05MonoGame.Sprites
 
         public int Width
         {
-            get { return (int)(Image.Width * Scale); }
+            get { return (int)(Image.Width); }
         }
 
         public int Height
         {
-            get { return (int)(Image.Height * Scale); }
+            get { return (int)(Image.Height); }
         }
 
         // The rectangle occupied by the unscaled image
@@ -53,7 +61,7 @@ namespace App05MonoGame.Sprites
                 (
                     (int)Position.X,
                     (int)Position.Y,
-                    Width, Height
+                    (int)(Width * Scale), (int)(Height * Scale)
                 );
             }
         }
@@ -96,13 +104,20 @@ namespace App05MonoGame.Sprites
 
         }
 
+        public bool HasCollided(Sprite other)
+        {
+            return BoundingBox.Intersects(other.BoundingBox);
+        }
+
         public virtual void Update(GameTime gameTime)
         {
             deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
 
-            if (IsActive)
+            if (IsActive && IsAlive)
             {
+                Rotation += MathHelper.ToRadians(RotationSpeed);
+                //Direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
                 Vector2 newPosition = Position + ((Direction * Speed) * deltaTime);
 
                 if (Boundary.Width == 0 || Boundary.Height == 0)
@@ -133,12 +148,15 @@ namespace App05MonoGame.Sprites
 
             //spriteBatch.Draw(Image, BoundingBox, Color.White);
 
-            spriteBatch.Draw
-                (Image,
-                 Position,
-                 null,
-                 Color.White, 0, Vector2.Zero,
-                 Scale, SpriteEffects.None, 1);
+            if(IsVisible)
+            {
+                spriteBatch.Draw
+                    (Image,
+                     Position,
+                     null,
+                     Color.White, Rotation, Origin,
+                     Scale, SpriteEffects.None, 1);
+            }
         }
 
         public virtual object Clone()

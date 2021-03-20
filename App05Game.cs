@@ -53,15 +53,30 @@ namespace App05MonoGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
-            
+
+            SetupPlayer();
+            SetupEnemy();
+        }
+
+        private void SetupPlayer()
+        {
             Texture2D sheet = Content.Load<Texture2D>("Actors/sprite-sheet1");
             playerSprite = LoadSprite(sheet);
-            playerSprite.Position = new Vector2(100, 500);
+            playerSprite.Position = new Vector2(100, 100);
+            //playerSprite.Rotation = MathHelper.ToRadians(10);
+            playerSprite.Speed = 200;
+            playerSprite.RotationSpeed = 2.0f;
+            playerSprite.IsVisible = false;
+        }
 
-            sheet = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
+        private void SetupEnemy()
+        {
+            Texture2D sheet = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
             enemySprite = LoadSprite(sheet);
-            enemySprite.Position = new Vector2(400, 500);
-
+            enemySprite.Position = new Vector2(500, 100);
+            enemySprite.Direction = new Vector2(-1, 0);
+            //enemySprite.Rotation = MathHelper.ToRadians(-45);
+            enemySprite.Speed = 100;
         }
 
         private Sprite LoadSprite(Texture2D sheet4x3)
@@ -92,6 +107,12 @@ namespace App05MonoGame
 
             playerSprite.Update(gameTime);
             enemySprite.Update(gameTime);
+
+            if(playerSprite.HasCollided(enemySprite))
+            {
+                playerSprite.IsAlive = false;
+                enemySprite.IsActive = false;
+            }
 
             base.Update(gameTime);
         }
