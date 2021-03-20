@@ -7,10 +7,6 @@ namespace App05MonoGame.Helpers
     {
         public Texture2D SpriteSheet { get; set; }
 
-        private readonly int rows;
-
-        private readonly int frames;
-
         private int sheetWidth;
 
         private int frameHeight;
@@ -21,15 +17,13 @@ namespace App05MonoGame.Helpers
         public Texture2D[] AnimationRow { get; }
 
         public SpriteSheetHelper(GraphicsDevice graphics,
-            Texture2D sheet, int rows, int frames)
+            Texture2D sheet, int rows, int columns)
         {
             SpriteSheet = sheet;
-            this.rows = rows;
-            this.frames = frames;
 
             frameHeight = sheet.Height / rows;
             sheetWidth = SpriteSheet.Width;
-            frameWidth = sheetWidth / frames;
+            frameWidth = sheetWidth / columns;
 
             AnimationRow = new Texture2D[rows];
 

@@ -1,4 +1,5 @@
-﻿using App05MonoGame.Sprites;
+﻿using App05MonoGame.Helpers;
+using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,7 +20,7 @@ namespace App05MonoGame
         private SpriteBatch spriteBatch;
 
         private Texture2D backgroundImage;
-        private Sprite crabSprite;
+        private Sprite playerSprite;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -49,12 +50,14 @@ namespace App05MonoGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-           // backgroundImage = Content.Load<Texture2D>("GrassTexture");
+            backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
+            Texture2D sheet = Content.Load<Texture2D>("Actors/sprite-sheet1");
+            
+            SpriteSheetHelper helper = new SpriteSheetHelper(
+                graphicsDevice, sheet, 4, 3);
 
-            Texture2D crabImage = Content.Load<Texture2D>("crab2");
-
-            crabSprite = new Sprite(crabImage, 100, 500);
-            crabSprite.Scale = 0.5f;
+            playerSprite = new Sprite(helper.FirstFrame, 100, 500);
+            playerSprite.Scale = 2.0f;
         }
 
         /// <summary>
@@ -71,7 +74,7 @@ namespace App05MonoGame
 
             // TODO: Add your update logic here
 
-            crabSprite.Update(gameTime);
+            playerSprite.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -89,8 +92,8 @@ namespace App05MonoGame
 
             spriteBatch.Begin();
 
-//            spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
-            crabSprite.Draw(spriteBatch);
+            spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
+            playerSprite.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
