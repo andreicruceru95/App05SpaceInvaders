@@ -15,11 +15,16 @@ namespace App05MonoGame.Sprites
         // A rectangle limiting where the sprite can move
         public Rectangle Boundary { get; set; }
 
+        // Speed = 60 is 1 Pixel/second
         public float Speed { get; set; }
+
+        public float Rotation { get; set; }
+
+        public float RotationSpeed { get; set; }
 
         public Vector2 Direction { get; set; }
 
-        public float Scale = 1f;
+        public float Scale { get; set; }
 
         public SpriteFont TextFont { get; set; }
 
@@ -59,24 +64,36 @@ namespace App05MonoGame.Sprites
 
         protected bool debug = false;
 
-        /// <summary>
-        /// Constructor sets the starting position of
-        /// the Sprite and current speed of a visible
-        /// and alive sprite.
-        /// </summary>
-        public Sprite(Texture2D image, int x, int y)
-        {
-            Image = image;
-            Position = new Vector2(x, y);
 
+        /// <summary>
+        /// Create a sprite that is active, alive and
+        /// visible with no speed, rotation or scale
+        /// facing east (to the right)
+        /// </summary>
+        public Sprite()
+        {
             Direction = new Vector2(1, 0);
-            Speed = 200;
+            Speed = 0;
 
             IsVisible = true;
             IsAlive = true;
             IsActive = true;
 
-            Scale = 2;
+            Scale = 1;
+            Rotation = 0;
+            RotationSpeed = 0;
+        }
+
+        /// <summary>
+        /// Constructor sets the main image and starting position of
+        /// the Sprite as a Vector2
+        /// </summary>
+        public Sprite(Texture2D image, int x, int y) : this()
+        {
+            Image = image;
+            Position = new Vector2(x, y);
+            
+
         }
 
         public virtual void Update(GameTime gameTime)
