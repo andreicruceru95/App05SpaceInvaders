@@ -20,7 +20,9 @@ namespace App05MonoGame
         private SpriteBatch spriteBatch;
 
         private Texture2D backgroundImage;
+
         private Sprite playerSprite;
+        private Sprite enemySprite;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -51,13 +53,27 @@ namespace App05MonoGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
-            Texture2D sheet = Content.Load<Texture2D>("Actors/sprite-sheet1");
             
-            SpriteSheetHelper helper = new SpriteSheetHelper(
-                graphicsDevice, sheet, 4, 3);
+            Texture2D sheet = Content.Load<Texture2D>("Actors/sprite-sheet1");
+            playerSprite = LoadSprite(sheet);
+            playerSprite.Position = new Vector2(100, 500);
 
-            playerSprite = new Sprite(helper.FirstFrame, 100, 500);
-            playerSprite.Scale = 2.0f;
+            sheet = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
+            enemySprite = LoadSprite(sheet);
+            enemySprite.Position = new Vector2(400, 500);
+
+        }
+
+        private Sprite LoadSprite(Texture2D sheet4x3)
+        {
+            SpriteSheetHelper helper = new SpriteSheetHelper(
+                graphicsDevice, sheet4x3, 4, 3);
+
+            Sprite sprite = new Sprite(helper.FirstFrame, 100, 500);
+            sprite.Scale = 2.0f;
+
+            return sprite;
+
         }
 
         /// <summary>
@@ -75,6 +91,7 @@ namespace App05MonoGame
             // TODO: Add your update logic here
 
             playerSprite.Update(gameTime);
+            enemySprite.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -93,7 +110,9 @@ namespace App05MonoGame
             spriteBatch.Begin();
 
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
+            
             playerSprite.Draw(spriteBatch);
+            enemySprite.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
