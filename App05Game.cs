@@ -23,6 +23,7 @@ namespace App05MonoGame
 
         private Sprite playerSprite;
         private Sprite enemySprite;
+        private Sprite sprite;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -53,6 +54,12 @@ namespace App05MonoGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
+            Texture2D image = Content.Load<Texture2D>("Actors/BigShip1");
+            
+            sprite = new Sprite(image, 400, 400);
+            sprite.Scale = 0.2f;
+            sprite.Rotation = MathHelper.ToRadians(90);
+            sprite.Speed = 200;
 
             SetupPlayer();
             //SetupEnemy();
@@ -85,11 +92,10 @@ namespace App05MonoGame
             SpriteSheetHelper helper = new SpriteSheetHelper(
                 graphicsDevice, sheet4x3, 4, 3);
 
-            Sprite sprite = new PlayerSprite(helper.FirstFrame, 100, 500);
+            PlayerSprite sprite = new PlayerSprite(helper.FirstFrame, 100, 500);
             sprite.Scale = 2.0f;
 
             return sprite;
-
         }
 
         /// <summary>
@@ -107,6 +113,8 @@ namespace App05MonoGame
             // TODO: Add your update logic here
 
             playerSprite.Update(gameTime);
+            sprite.Update(gameTime);
+
             //enemySprite.Update(gameTime);
 
             //if(playerSprite.HasCollided(enemySprite))
@@ -134,6 +142,8 @@ namespace App05MonoGame
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
             
             playerSprite.Draw(spriteBatch);
+            sprite.Draw(spriteBatch);
+
             //enemySprite.Draw(spriteBatch);
 
             spriteBatch.End();
