@@ -1,4 +1,5 @@
 ﻿using App05MonoGame.Helpers;
+using App05MonoGame.Managers;
 using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,7 +24,7 @@ namespace App05MonoGame
 
         private Sprite playerSprite;
         private Sprite enemySprite;
-        private Sprite sprite;
+        private AnimatedSprite sprite;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -54,12 +55,17 @@ namespace App05MonoGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
-            Texture2D image = Content.Load<Texture2D>("Actors/BigShip1");
-            
-            sprite = new Sprite(image, 400, 400);
-            sprite.Scale = 0.2f;
-            sprite.Rotation = MathHelper.ToRadians(90);
-            sprite.Speed = 200;
+            Texture2D image = Content.Load<Texture2D>("Actors/Stones2Filled_01");
+            Texture2D coin = Content.Load<Texture2D>("Actors/coin_copper");
+
+            Animation animation = new Animation("coin", coin, 8);
+
+            sprite = new AnimatedSprite();
+            sprite.Animation = animation;
+
+            sprite.Scale = 1.0f;
+            //sprite.Rotation = MathHelper.ToRadians(90);
+            sprite.Speed = 50;
 
             SetupPlayer();
             //SetupEnemy();
@@ -113,7 +119,7 @@ namespace App05MonoGame
             // TODO: Add your update logic here
 
             playerSprite.Update(gameTime);
-            sprite.Update(gameTime);
+            sprite.Update(gameTime);            
 
             //enemySprite.Update(gameTime);
 
