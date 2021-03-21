@@ -55,18 +55,19 @@ namespace App05MonoGame
             backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
 
             SetupPlayer();
-            SetupEnemy();
+            //SetupEnemy();
         }
 
         private void SetupPlayer()
         {
             Texture2D sheet = Content.Load<Texture2D>("Actors/sprite-sheet1");
             playerSprite = LoadSprite(sheet);
+
             playerSprite.Position = new Vector2(100, 100);
-            //playerSprite.Rotation = MathHelper.ToRadians(10);
             playerSprite.Speed = 200;
-            playerSprite.RotationSpeed = 2.0f;
-            playerSprite.IsVisible = false;
+
+            //playerSprite.Rotation = MathHelper.ToRadians(10);
+            playerSprite.RotationSpeed = 0f;
         }
 
         private void SetupEnemy()
@@ -84,7 +85,7 @@ namespace App05MonoGame
             SpriteSheetHelper helper = new SpriteSheetHelper(
                 graphicsDevice, sheet4x3, 4, 3);
 
-            Sprite sprite = new Sprite(helper.FirstFrame, 100, 500);
+            Sprite sprite = new PlayerSprite(helper.FirstFrame, 100, 500);
             sprite.Scale = 2.0f;
 
             return sprite;
@@ -106,13 +107,13 @@ namespace App05MonoGame
             // TODO: Add your update logic here
 
             playerSprite.Update(gameTime);
-            enemySprite.Update(gameTime);
+            //enemySprite.Update(gameTime);
 
-            if(playerSprite.HasCollided(enemySprite))
-            {
-                playerSprite.IsAlive = false;
-                enemySprite.IsActive = false;
-            }
+            //if(playerSprite.HasCollided(enemySprite))
+            //{
+            //    playerSprite.IsAlive = false;
+            //    enemySprite.IsActive = false;
+            //}
 
             base.Update(gameTime);
         }
@@ -133,7 +134,7 @@ namespace App05MonoGame
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
             
             playerSprite.Draw(spriteBatch);
-            enemySprite.Draw(spriteBatch);
+            //enemySprite.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);

@@ -18,13 +18,7 @@ namespace App05MonoGame.Sprites
         // Speed = 60 is 1 Pixel/second
         public float Speed { get; set; }
 
-        public Vector2 Origin
-        {
-            get 
-            {
-                return new Vector2 (Width / 2, Height / 2);
-            }
-        }
+        public Vector2 Origin { get; set; }
 
         public float Rotation { get; set; }
 
@@ -80,6 +74,10 @@ namespace App05MonoGame.Sprites
         /// </summary>
         public Sprite()
         {
+            if (Image != null)
+                Origin = new Vector2(Width / 2, Height / 2);
+            else Origin = Vector2.Zero;
+
             Direction = new Vector2(1, 0);
             Speed = 0;
 
@@ -100,8 +98,6 @@ namespace App05MonoGame.Sprites
         {
             Image = image;
             Position = new Vector2(x, y);
-            
-
         }
 
         public bool HasCollided(Sprite other)
@@ -113,11 +109,9 @@ namespace App05MonoGame.Sprites
         {
             deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-
             if (IsActive && IsAlive)
             {
                 Rotation += MathHelper.ToRadians(RotationSpeed);
-                //Direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
                 Vector2 newPosition = Position + ((Direction * Speed) * deltaTime);
 
                 if (Boundary.Width == 0 || Boundary.Height == 0)
@@ -142,11 +136,8 @@ namespace App05MonoGame.Sprites
                     $"({Position.X:0},{Position.Y:0})", Position);
             }
 
-            Rectangle destination = new Rectangle
-                ((int)Position.X, (int)Position.Y, Width, Height);
-
-
-            //spriteBatch.Draw(Image, BoundingBox, Color.White);
+            if (Origin == Vector2.Zero)
+                Origin = new Vector2(Width / 2, Height / 2);
 
             if(IsVisible)
             {

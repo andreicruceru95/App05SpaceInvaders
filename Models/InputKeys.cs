@@ -16,5 +16,8 @@ namespace App05MonoGame.Models
         public Keys Shoot { get; set; }
         public Keys Pickup { get; set; }
         public Keys Drop { get; set; }
+        public Keys Forward { get; set; }
+        public Keys TurnLeft { get; set; }
+        public Keys TurnRight { get; set; }
     }
 }
