@@ -22,13 +22,16 @@ namespace App05MonoGame.Managers
         public Texture2D FrameSet { get; set; }
         public int CurrentFrame { get; set; }
         public bool IsPlaying { get; set; }
+        public bool IsLooping { get; set; }
         public int FramesPerSecond { get; set; }
 
         private int NumberOfFrames;
         private int frameWidth;
         private int frameHeight;
-        private float timer;
-        private float maxTime;
+        
+        private float elapsedTime;
+        private float maxFrameTime;
+        private Rectangle lastRectangle;
 
         public Animation(string name, Texture2D frameSet, int frames)
         {
@@ -36,46 +39,50 @@ namespace App05MonoGame.Managers
             FrameSet = frameSet;
             NumberOfFrames = frames;
 
-            FramesPerSecond = 2;
+            FramesPerSecond = 10;
             frameHeight = FrameSet.Height;
             frameWidth = FrameSet.Width / NumberOfFrames;
-            
+            IsLooping = true;
+
+            Start();
         }
 
         public void Start()
         {
             CurrentFrame = 0;
             IsPlaying = true;
-            maxTime = 1 / FramesPerSecond;
-            timer = 0;
+            maxFrameTime = 1.0f / (float)FramesPerSecond;
+            elapsedTime = 0;
+
+            lastRectangle = new Rectangle(0, 0, frameWidth, frameHeight);
         }
 
         public void Stop()
         {
             IsPlaying = false;
-            maxTime = 0;
-            timer = 0;
+            maxFrameTime = 0;
+            elapsedTime = 0;
         }
 
         public Rectangle Update(GameTime gameTime)
         {
-            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            elapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if(IsPlaying && timer >= maxTime)
+            if(IsPlaying && elapsedTime >= maxFrameTime)
             {
-                if (CurrentFrame < NumberOfFrames)
+                if (CurrentFrame < NumberOfFrames - 1)
                     CurrentFrame++;
 
-                else
+                else if(IsLooping)
                     CurrentFrame = 0;
 
-                timer = 0;
+                elapsedTime = 0;
 
                 return new Rectangle((CurrentFrame - 1) * frameWidth, 0,
                     frameWidth, frameHeight);
             }
 
-            return Rectangle.Empty;
+            return lastRectangle;
         }        
     }
 }

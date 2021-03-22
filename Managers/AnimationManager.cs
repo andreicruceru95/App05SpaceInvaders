@@ -32,6 +32,7 @@ namespace App05MonoGame.Managers
 
         // A key image for the base sprite
         public Texture2D FirstFrame { get; set; }
+
         // Each element is a row of image frames
         public Texture2D[] SpriteSheetRow { get; }
 

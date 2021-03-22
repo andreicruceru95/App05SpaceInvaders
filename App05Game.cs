@@ -74,13 +74,13 @@ namespace App05MonoGame
 
         private void SetupPlayer()
         {
-            Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/sprite-sheet1");
+            Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
             playerSprite = CreateAnimatedSprite(sheet4x3);
 
             playerSprite.Position = new Vector2(200, 200);
             playerSprite.Speed = 50;
             playerSprite.Direction = new Vector2(1, 0);
-            playerSprite.Scale = 2.0f;
+            playerSprite.Scale = 4.0f;
 
             playerSprite.Rotation = MathHelper.ToRadians(0);
             playerSprite.RotationSpeed = 0f;
@@ -99,6 +99,7 @@ namespace App05MonoGame
             
             animatedSprite.Animations = manager.Animations;
             animatedSprite.PlayAnimation("Right");
+            animatedSprite.Image = manager.FirstFrame;
 
             return animatedSprite;
         }
