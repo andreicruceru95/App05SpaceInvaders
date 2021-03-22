@@ -6,6 +6,14 @@ using System;
 
 namespace App05MonoGame.Sprites
 {
+    /// <summary>
+    /// This class contains at least one animation,
+    /// although more can be added to the Dictionary
+    /// It updates and draws the current animation.
+    /// </summary>
+    /// <authors>
+    /// Derek Peacock & Andrei Cruceru
+    /// </authors>
     public class PlayerSprite : Sprite
     {
         public InputKeys InputKeys { get; set; }
