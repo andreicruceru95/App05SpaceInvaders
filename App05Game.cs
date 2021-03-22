@@ -22,9 +22,10 @@ namespace App05MonoGame
 
         private Texture2D backgroundImage;
 
-        private Sprite playerSprite;
         private Sprite enemySprite;
-        private AnimatedSprite sprite;
+
+        private AnimatedSprite playerSprite;
+        private AnimatedSprite coinSprite;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -55,17 +56,17 @@ namespace App05MonoGame
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
-            Texture2D image = Content.Load<Texture2D>("Actors/Stones2Filled_01");
+            Texture2D asteroid = Content.Load<Texture2D>("Actors/Stones2Filled_01");
             Texture2D coin = Content.Load<Texture2D>("Actors/coin_copper");
 
             Animation animation = new Animation("coin", coin, 8);
 
-            sprite = new AnimatedSprite();
-            sprite.Animation = animation;
+            coinSprite = new AnimatedSprite();
+            coinSprite.Animation = animation;
 
-            sprite.Scale = 1.0f;
+            coinSprite.Scale = 2.0f;
             //sprite.Rotation = MathHelper.ToRadians(90);
-            sprite.Speed = 50;
+            coinSprite.Speed = 0;
 
             SetupPlayer();
             //SetupEnemy();
@@ -73,36 +74,45 @@ namespace App05MonoGame
 
         private void SetupPlayer()
         {
-            Texture2D sheet = Content.Load<Texture2D>("Actors/sprite-sheet1");
-            playerSprite = LoadSprite(sheet);
+            Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/sprite-sheet1");
+            playerSprite = CreateAnimatedSprite(sheet4x3);
 
-            playerSprite.Position = new Vector2(100, 100);
-            playerSprite.Speed = 200;
+            playerSprite.Position = new Vector2(200, 200);
+            playerSprite.Speed = 50;
+            playerSprite.Direction = new Vector2(1, 0);
+            playerSprite.Scale = 2.0f;
 
-            //playerSprite.Rotation = MathHelper.ToRadians(10);
+            playerSprite.Rotation = MathHelper.ToRadians(0);
             playerSprite.RotationSpeed = 0f;
+        }
+
+        private AnimatedSprite CreateAnimatedSprite(Texture2D sheet)
+        {
+            AnimationManager manager = new AnimationManager(graphicsDevice, sheet, 4, 3);
+            
+            manager.CreateAnimation("Down", 1);
+            manager.CreateAnimation("Left", 2);
+            manager.CreateAnimation("Right", 3);
+            manager.CreateAnimation("Up", 4);
+
+            AnimatedSprite animatedSprite = new AnimatedSprite();
+            
+            animatedSprite.Animations = manager.Animations;
+            animatedSprite.PlayAnimation("Right");
+
+            return animatedSprite;
         }
 
         private void SetupEnemy()
         {
-            Texture2D sheet = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
-            enemySprite = LoadSprite(sheet);
-            enemySprite.Position = new Vector2(500, 100);
-            enemySprite.Direction = new Vector2(-1, 0);
-            //enemySprite.Rotation = MathHelper.ToRadians(-45);
-            enemySprite.Speed = 100;
+            //Texture2D sheet = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
+            //enemySprite = LoadSpriteSheet(sheet);
+            //enemySprite.Position = new Vector2(500, 100);
+            //enemySprite.Direction = new Vector2(-1, 0);
+            ////enemySprite.Rotation = MathHelper.ToRadians(-45);
+            //enemySprite.Speed = 100;
         }
 
-        private Sprite LoadSprite(Texture2D sheet4x3)
-        {
-            SpriteSheetHelper helper = new SpriteSheetHelper(
-                graphicsDevice, sheet4x3, 4, 3);
-
-            PlayerSprite sprite = new PlayerSprite(helper.FirstFrame, 100, 500);
-            sprite.Scale = 2.0f;
-
-            return sprite;
-        }
 
         /// <summary>
         /// Called 60 frames/per second and updates the positions
@@ -119,14 +129,15 @@ namespace App05MonoGame
             // TODO: Add your update logic here
 
             playerSprite.Update(gameTime);
-            sprite.Update(gameTime);            
+            //coinSprite.Update(gameTime);
 
             //enemySprite.Update(gameTime);
 
-            //if(playerSprite.HasCollided(enemySprite))
+            //if (playerSprite.HasCollided(coinSprite))
             //{
-            //    playerSprite.IsAlive = false;
-            //    enemySprite.IsActive = false;
+            //    coinSprite.IsActive = false;
+            //    coinSprite.IsAlive = false;
+            //    coinSprite.IsVisible = false;
             //}
 
             base.Update(gameTime);
@@ -148,7 +159,7 @@ namespace App05MonoGame
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
             
             playerSprite.Draw(spriteBatch);
-            sprite.Draw(spriteBatch);
+            //coinSprite.Draw(spriteBatch);
 
             //enemySprite.Draw(spriteBatch);
 

@@ -7,16 +7,37 @@ using System.Text;
 
 namespace App05MonoGame.Sprites
 {
+    /// <summary>
+    /// This class contains at least one animation,
+    /// although more can be added to the Dictionary
+    /// It updates and draws the current animation.
+    /// </summary>
+    /// <authors>
+    /// Derek Peacock & Andrei Cruceru
+    /// </authors>
     public class AnimatedSprite : Sprite
     {
 
+        public Dictionary<string, Animation> Animations { get; set; }
+
         public Animation Animation { get; set; }
+
+
 
         private Rectangle sourceRectangle;
 
         public AnimatedSprite() : base()
         {
 
+        }
+
+        public void PlayAnimation(string key)
+        {
+            if(Animations != null && Animations.ContainsKey(key))
+            {
+                Animation = Animations[key];
+                Animation.Start();
+            }
         }
 
         public override void Update(GameTime gameTime)

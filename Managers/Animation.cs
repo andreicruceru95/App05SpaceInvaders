@@ -6,6 +6,15 @@ using System.Text;
 
 namespace App05MonoGame.Managers
 {
+    /// <summary>
+    /// This class takes a sprite sheet with one row
+    /// of many images and cycles through it frame
+    /// by frame returning the current frame in
+    /// the update method
+    /// </summary>
+    /// <authors>
+    /// Derek Peacock & Andrei Cruceru
+    /// </authors>
     public class Animation
     {
         public string Name { get; private set; }
@@ -26,15 +35,26 @@ namespace App05MonoGame.Managers
             Name = name;
             FrameSet = frameSet;
             NumberOfFrames = frames;
-            CurrentFrame = 0;
-            IsPlaying = true;
 
-            FramesPerSecond = 10;
+            FramesPerSecond = 2;
             frameHeight = FrameSet.Height;
             frameWidth = FrameSet.Width / NumberOfFrames;
-            timer = 0;
-            maxTime = 1 / FramesPerSecond;
             
+        }
+
+        public void Start()
+        {
+            CurrentFrame = 0;
+            IsPlaying = true;
+            maxTime = 1 / FramesPerSecond;
+            timer = 0;
+        }
+
+        public void Stop()
+        {
+            IsPlaying = false;
+            maxTime = 0;
+            timer = 0;
         }
 
         public Rectangle Update(GameTime gameTime)
