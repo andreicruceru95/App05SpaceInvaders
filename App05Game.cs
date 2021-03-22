@@ -63,9 +63,10 @@ namespace App05MonoGame
 
             coinSprite = new AnimatedSprite();
             coinSprite.Animation = animation;
+            coinSprite.Image = animation.SetMainFrame(graphicsDevice);
 
             coinSprite.Scale = 2.0f;
-            //sprite.Rotation = MathHelper.ToRadians(90);
+            coinSprite.Position = new Vector2(600, 100);
             coinSprite.Speed = 0;
 
             SetupPlayer();
@@ -130,7 +131,7 @@ namespace App05MonoGame
             // TODO: Add your update logic here
 
             playerSprite.Update(gameTime);
-            //coinSprite.Update(gameTime);
+            coinSprite.Update(gameTime);
 
             //enemySprite.Update(gameTime);
 
@@ -160,7 +161,7 @@ namespace App05MonoGame
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
             
             playerSprite.Draw(spriteBatch);
-            //coinSprite.Draw(spriteBatch);
+            coinSprite.Draw(spriteBatch);
 
             //enemySprite.Draw(spriteBatch);
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using App05MonoGame.Helpers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace App05MonoGame.Managers
     /// This class takes a sprite sheet with one row
     /// of many images and cycles through it frame
     /// by frame returning the current frame in
-    /// the update method
+    /// the update method as a source Rectangle
     /// </summary>
     /// <authors>
     /// Derek Peacock & Andrei Cruceru
@@ -39,7 +40,7 @@ namespace App05MonoGame.Managers
             FrameSet = frameSet;
             NumberOfFrames = frames;
 
-            FramesPerSecond = 10;
+            FramesPerSecond = 5;
             frameHeight = FrameSet.Height;
             frameWidth = FrameSet.Width / NumberOfFrames;
             IsLooping = true;
@@ -49,7 +50,7 @@ namespace App05MonoGame.Managers
 
         public void Start()
         {
-            CurrentFrame = 0;
+            CurrentFrame = NumberOfFrames - 1;
             IsPlaying = true;
             maxFrameTime = 1.0f / (float)FramesPerSecond;
             elapsedTime = 0;
@@ -62,6 +63,15 @@ namespace App05MonoGame.Managers
             IsPlaying = false;
             maxFrameTime = 0;
             elapsedTime = 0;
+        }
+
+
+        public Texture2D SetMainFrame(GraphicsDevice graphics)
+        {
+            Texture2D mainFrame = FrameSet.CreateTexture(
+                    graphics, new Rectangle(0, 0, frameWidth, frameHeight));
+
+            return mainFrame;
         }
 
         public Rectangle Update(GameTime gameTime)
@@ -78,7 +88,7 @@ namespace App05MonoGame.Managers
 
                 elapsedTime = 0;
 
-                return new Rectangle((CurrentFrame - 1) * frameWidth, 0,
+                return new Rectangle((CurrentFrame) * frameWidth, 0,
                     frameWidth, frameHeight);
             }
 

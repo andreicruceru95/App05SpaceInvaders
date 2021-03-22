@@ -22,13 +22,13 @@ namespace App05MonoGame.Sprites
 
         public Animation Animation { get; set; }
 
-
-
         private Rectangle sourceRectangle;
+
+        private Rectangle lastRectangle;
 
         public AnimatedSprite() : base()
         {
-
+            lastRectangle = Rectangle.Empty;
         }
 
         public void PlayAnimation(string key)
@@ -52,7 +52,8 @@ namespace App05MonoGame.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Animation != null && sourceRectangle != Rectangle.Empty)
+            if (Animation != null && sourceRectangle != Rectangle.Empty  &&
+                sourceRectangle != lastRectangle)
             {
                 spriteBatch.Draw
                         (Animation.FrameSet,
@@ -60,6 +61,8 @@ namespace App05MonoGame.Sprites
                          sourceRectangle,
                          Color.White, Rotation, Origin,
                          Scale, SpriteEffects.None, 1);
+                
+                lastRectangle = sourceRectangle;
             }
             else
                 base.Draw(spriteBatch);

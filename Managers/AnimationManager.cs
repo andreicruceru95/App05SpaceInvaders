@@ -8,7 +8,7 @@ namespace App05MonoGame.Managers
     /// <summary>
     /// This class takes a sprite sheet which may have many
     /// rows and columns and breaks it up into separate
-    /// animations.
+    /// animations one per row.
     /// </summary>
     /// <authors>
     /// Derek Peacock & Andrei Cruceru
@@ -34,12 +34,14 @@ namespace App05MonoGame.Managers
         public Texture2D FirstFrame { get; set; }
 
         // Each element is a row of image frames
-        public Texture2D[] SpriteSheetRow { get; }
+        public Texture2D[] SpriteSheets { get; }
 
         public Dictionary<string, Animation> Animations { get; set; }
 
         /// <summary>
-        /// 
+        /// Initialise all the attributes, create a new
+        /// array of sheets and new dictionary of
+        /// Animations.
         /// </summary>
         public AnimationManager(GraphicsDevice graphics,
             Texture2D sheet, int rows, int columns)
@@ -54,23 +56,31 @@ namespace App05MonoGame.Managers
             frameCount = columns;
             animationCount = rows;
 
-            SpriteSheetRow = new Texture2D[animationCount];
+            SpriteSheets = new Texture2D[animationCount];
             Animations = new Dictionary<string, Animation>();
 
-            CreateAnimationSheets();
+            if(rows > 1)
+                CreateSheets();
+            else
+            {
+                SpriteSheets[0] = sheet;
+            }
         }
 
-        private void CreateAnimationSheets()
+        /// <summary>
+        /// Break up the orginal sprite sheet into rows
+        /// </summary>
+        private void CreateSheets()
         {
             for (int row = 0; row < animationCount; row++)
             {
                 Texture2D Image = SpriteSheet.CreateTexture(
                     graphicsDevice, new Rectangle(0, row * frameHeight,
                                             sheetWidth, frameHeight));
-                SpriteSheetRow[row] = Image;
+                SpriteSheets[row] = Image;
             }
 
-            FirstFrame = SpriteSheetRow[0].CreateTexture(
+            FirstFrame = SpriteSheets[0].CreateTexture(
                 graphicsDevice, new Rectangle(0, 0, frameWidth, frameHeight));
 
         }
@@ -85,7 +95,7 @@ namespace App05MonoGame.Managers
             if (row > 0 && row <= animationCount)
             {
                 Animation animation = new Animation(
-                    keyName, SpriteSheetRow[row - 1], frameCount);
+                    keyName, SpriteSheets[row - 1], frameCount);
                 
                 Animations.Add(keyName, animation);
             }
@@ -97,11 +107,15 @@ namespace App05MonoGame.Managers
         /// </summary>
         public void CreateAnimationGroup(string[] keyNames)
         {
-            int row = 0;
-            foreach(string key in keyNames)
+            if(keyNames.Length == animationCount)
             {
-                row++;
-                CreateAnimation(key, row);
+                int row = 0;
+                foreach (string key in keyNames)
+                {
+                    row++;
+                    CreateAnimation(key, row);
+                }
+
             }
         }
 
