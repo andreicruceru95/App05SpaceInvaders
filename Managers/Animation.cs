@@ -32,7 +32,6 @@ namespace App05MonoGame.Managers
         
         private float elapsedTime;
         private float maxFrameTime;
-        private Rectangle lastRectangle;
 
         public Animation(string name, Texture2D frameSet, int frames)
         {
@@ -40,7 +39,7 @@ namespace App05MonoGame.Managers
             FrameSet = frameSet;
             NumberOfFrames = frames;
 
-            FramesPerSecond = 5;
+            FramesPerSecond = 10;
             frameHeight = FrameSet.Height;
             frameWidth = FrameSet.Width / NumberOfFrames;
             IsLooping = true;
@@ -54,8 +53,6 @@ namespace App05MonoGame.Managers
             IsPlaying = true;
             maxFrameTime = 1.0f / (float)FramesPerSecond;
             elapsedTime = 0;
-
-            lastRectangle = new Rectangle(0, 0, frameWidth, frameHeight);
         }
 
         public void Stop()
@@ -75,7 +72,7 @@ namespace App05MonoGame.Managers
         }
 
         public Rectangle Update(GameTime gameTime)
-        {
+        {            
             elapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if(IsPlaying && elapsedTime >= maxFrameTime)
@@ -87,12 +84,14 @@ namespace App05MonoGame.Managers
                     CurrentFrame = 0;
 
                 elapsedTime = 0;
-
+                
                 return new Rectangle((CurrentFrame) * frameWidth, 0,
                     frameWidth, frameHeight);
             }
-
-            return lastRectangle;
+            // this will return the previous frame instead of an empty rectangle
+            // so we are always drawing an image.
+            return new Rectangle((CurrentFrame) * frameWidth, 0,
+                    frameWidth, frameHeight);
         }        
     }
 }

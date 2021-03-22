@@ -24,11 +24,8 @@ namespace App05MonoGame.Sprites
 
         private Rectangle sourceRectangle;
 
-        private Rectangle lastRectangle;
-
         public AnimatedSprite() : base()
         {
-            lastRectangle = Rectangle.Empty;
         }
 
         public void PlayAnimation(string key)
@@ -52,20 +49,19 @@ namespace App05MonoGame.Sprites
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Animation != null && sourceRectangle != Rectangle.Empty  &&
-                sourceRectangle != lastRectangle)
+            // SourceRectangle should never be empty now as Animation.Update will always 
+            //return a frame.
+            if (Animation != null)// && sourceRectangle != Rectangle.Empty)            
             {
-                spriteBatch.Draw
+                spriteBatch.Draw //This will now draw either a new frame or the previous frame.
                         (Animation.FrameSet,
                          Position,
                          sourceRectangle,
                          Color.White, Rotation, Origin,
-                         Scale, SpriteEffects.None, 1);
-                
-                lastRectangle = sourceRectangle;
+                         Scale, SpriteEffects.None, 1);                         
             }
-            else
-                base.Draw(spriteBatch);
+            else  
+                base.Draw(spriteBatch); 
         }
     }
 }
