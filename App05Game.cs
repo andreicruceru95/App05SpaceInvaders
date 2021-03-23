@@ -94,6 +94,10 @@ namespace App05MonoGame
             coinsController.CreateCoin(graphicsDevice, coinSheet);
         }
 
+        /// <summary>
+        /// This is a single image sprite that rotates
+        /// and move at a constant speed in a fixed direction
+        /// </summary>
         private void SetupAsteroid()
         {
             Texture2D asteroid = Content.Load<Texture2D>(
@@ -108,6 +112,11 @@ namespace App05MonoGame
 
         }
 
+        /// <summary>
+        /// This is a Sprite that can be controlled by a
+        /// player using Rotate Left = A, Rotate Right = D, 
+        /// Forward = Space
+        /// </summary>
         private void SetupSpaceShip()
         {
             Texture2D ship = Content.Load<Texture2D>(
@@ -119,6 +128,10 @@ namespace App05MonoGame
         }
 
 
+        /// <summary>
+        /// This is a Sprite with four animations for the four
+        /// directions, up, down, left and right
+        /// </summary>
         private void SetupPlayer()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
@@ -132,7 +145,7 @@ namespace App05MonoGame
             manager.AppendAnimationsTo(playerSprite);
 
             playerSprite.CanWalk = true;
-            playerSprite.Scale = 3.0f;
+            playerSprite.Scale = 2.0f;
 
             playerSprite.Position = new Vector2(200, 200);
             playerSprite.Speed = 200;
@@ -142,6 +155,10 @@ namespace App05MonoGame
             playerSprite.RotationSpeed = 0f;
         }
 
+        /// <summary>
+        /// This is a Sprite with four animations for the four
+        /// directions, up, down, left and right
+        /// </summary>
         private void SetupEnemy()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
@@ -155,7 +172,7 @@ namespace App05MonoGame
             enemySprite = new AnimatedSprite();
             manager.AppendAnimationsTo(enemySprite);
 
-            enemySprite.Scale = 3.0f;
+            enemySprite.Scale = 2.0f;
             enemySprite.PlayAnimation("Left");
 
             enemySprite.Position = new Vector2(1000, 200);
