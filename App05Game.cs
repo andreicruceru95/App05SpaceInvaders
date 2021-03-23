@@ -2,6 +2,7 @@
 using App05MonoGame.Managers;
 using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -35,6 +36,7 @@ namespace App05MonoGame
         private SpriteBatch spriteBatch;
 
         private Texture2D backgroundImage;
+        private SoundEffect flameEffect;
 
         private CoinsController coinsController;
 
@@ -76,6 +78,9 @@ namespace App05MonoGame
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            SoundController.LoadContent(Content);
+            SoundController.PlaySong("Adventure");
+            flameEffect = SoundController.GetSoundEffect("Flame");
 
             backgroundImage = Content.Load<Texture2D>(
                 "backgrounds/green_background720p");
@@ -201,8 +206,10 @@ namespace App05MonoGame
             shipSprite.Update(gameTime);
             asteroidSprite.Update(gameTime);
 
-            if (shipSprite.HasCollided(asteroidSprite))
+            if (shipSprite.HasCollided(asteroidSprite) && shipSprite.IsAlive)
             {
+                flameEffect.Play();
+
                 shipSprite.IsActive = false;
                 shipSprite.IsAlive = false;
                 shipSprite.IsVisible = false;

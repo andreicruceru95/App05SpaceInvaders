@@ -164,3 +164,21 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/arial.spritefont
 
+#begin Sounds/Adventures.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/Adventures.mp3
+
+#begin Sounds/Coins.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Coins.mp3
+
+#begin Sounds/flame.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/flame.mp3
+

@@ -1,5 +1,6 @@
 ﻿using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,9 @@ namespace App05MonoGame.Managers
     /// </authors>
     public class CoinsController
     {
-        public List<AnimatedSprite> Coins = new List<AnimatedSprite>();
+        SoundEffect coinEffect;
+
+        public List<AnimatedSprite> Coins = new List<AnimatedSprite>();        
 
         /// <summary>
         /// Create an animated sprite of a copper coin
@@ -32,6 +35,7 @@ namespace App05MonoGame.Managers
         /// </summary>
         public void CreateCoin(GraphicsDevice graphics, Texture2D coinSheet)
         {
+            coinEffect = SoundController.GetSoundEffect("Coin");
             Animation animation = new Animation("coin", coinSheet, 8);
 
             AnimatedSprite coin = new AnimatedSprite();
@@ -49,13 +53,15 @@ namespace App05MonoGame.Managers
         {
             foreach (AnimatedSprite coin in Coins)
             {
-                if (coin.HasCollided(player))
+                if (coin.HasCollided(player) && coin.IsAlive)
                 {
+                    coinEffect.Play();
+
                     coin.IsActive = false;
                     coin.IsAlive = false;
                     coin.IsVisible = false;
                 }
-            }
+            }           
         }
 
         public void Update(GameTime gameTime)

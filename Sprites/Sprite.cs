@@ -59,13 +59,11 @@ namespace App05MonoGame.Sprites
                 );
             }
         }
-
         // Variables
 
         protected float deltaTime;
 
-        protected bool debug = false;
-
+        protected bool debug = false;   
 
         /// <summary>
         /// Create a sprite that is active, alive and
@@ -87,7 +85,7 @@ namespace App05MonoGame.Sprites
 
             Scale = 1;
             Rotation = 0;
-            RotationSpeed = 0;
+            RotationSpeed = 0;            
         }
 
         /// <summary>

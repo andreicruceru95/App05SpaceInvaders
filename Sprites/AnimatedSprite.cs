@@ -24,7 +24,7 @@ namespace App05MonoGame.Sprites
         private Rectangle sourceRectangle;
 
         public AnimatedSprite() : base()
-        {
+        {            
         }
 
         public void PlayAnimation(string key)
@@ -38,7 +38,10 @@ namespace App05MonoGame.Sprites
 
         public override void Update(GameTime gameTime)
         {
-            if(Animation != null && IsActive)
+            //added a default frame for when the sprite is not active
+            sourceRectangle = new Rectangle(0, 0, Width, Height);
+
+            if (Animation != null && IsActive)
             {
                 sourceRectangle = Animation.Update(gameTime);
             }
