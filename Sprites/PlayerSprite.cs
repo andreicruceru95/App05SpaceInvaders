@@ -24,11 +24,14 @@ namespace App05MonoGame.Sprites
             InputKeys = new InputKeys()
             {
                 // For directions
+
                 Up = Keys.Up,
                 Down = Keys.Down,
                 Left = Keys.Left,
                 Right = Keys.Right,
+                
                 // Rotate and Move
+
                 TurnLeft = Keys.A,
                 TurnRight = Keys.D,
                 Forward = Keys.Space

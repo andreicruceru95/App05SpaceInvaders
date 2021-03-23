@@ -67,7 +67,7 @@ namespace App05MonoGame
         }
 
         /// <summary>
-        /// use this.Content to load your game content here
+        /// use Content to load your game images and other content here
         /// </summary>
         protected override void LoadContent()
         {
@@ -93,9 +93,9 @@ namespace App05MonoGame
             Texture2D asteroid = Content.Load<Texture2D>(
                "Actors/Stones2Filled_01");
 
-            asteroidSprite = new Sprite(asteroid, 1200, 600);
+            asteroidSprite = new Sprite(asteroid, 1200, 500);
             asteroidSprite.Direction = new Vector2(-1, 0);
-            asteroidSprite.Speed = 50;
+            asteroidSprite.Speed = 100;
 
             asteroidSprite.Rotation = MathHelper.ToRadians(3);
             asteroidSprite.RotationSpeed = 2f;
@@ -107,8 +107,9 @@ namespace App05MonoGame
             Texture2D ship = Content.Load<Texture2D>(
                "Actors/GreenShip");
 
-            shipSprite = new PlayerSprite(ship, 200, 600);
+            shipSprite = new PlayerSprite(ship, 200, 500);
             shipSprite.Direction = new Vector2(1, 0);
+            shipSprite.Speed = 200;
 
         }
 
