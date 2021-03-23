@@ -36,6 +36,8 @@ namespace App05MonoGame
 
         private Texture2D backgroundImage;
 
+        private CoinsController coinsController;
+
         private PlayerSprite shipSprite;
         private Sprite asteroidSprite;
 
@@ -48,6 +50,8 @@ namespace App05MonoGame
             graphicsManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            coinsController = new CoinsController();
         }
 
         /// <summary>
@@ -84,8 +88,10 @@ namespace App05MonoGame
             // animated sprites suitable for pacman type game
 
             SetupPlayer();
-            SetupCoin();
             SetupEnemy();
+
+            Texture2D coinSheet = Content.Load<Texture2D>("Actors/coin_copper");
+            coinsController.CreateCoin(graphicsDevice, coinSheet);
         }
 
         private void SetupAsteroid()
@@ -110,32 +116,21 @@ namespace App05MonoGame
             shipSprite = new PlayerSprite(ship, 200, 500);
             shipSprite.Direction = new Vector2(1, 0);
             shipSprite.Speed = 200;
-
         }
 
-        /// <summary>
-        /// Create an animated sprite of a copper coin
-        /// which could be collected by the player for
-        /// a score
-        /// </summary>
-        private void SetupCoin()
-        {
-            Texture2D coin = Content.Load<Texture2D>("Actors/coin_copper");
 
-            Animation animation = new Animation("coin", coin, 8);
-
-            coinSprite = new AnimatedSprite();
-            coinSprite.Animation = animation;
-            coinSprite.Image = animation.SetMainFrame(graphicsDevice);
-
-            coinSprite.Scale = 2.0f;
-            coinSprite.Position = new Vector2(600, 100);
-            coinSprite.Speed = 0;
-        }
         private void SetupPlayer()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
-            playerSprite = CreateAnimatedPlayer(sheet4x3);
+
+            AnimationManager manager = new AnimationManager(graphicsDevice, sheet4x3, 4, 3);
+
+            string[] keys = new string[] { "Down", "Left", "Right", "Up" };
+            manager.CreateAnimationGroup(keys);
+
+            playerSprite = new AnimatedPlayer();
+            manager.AppendAnimationsTo(playerSprite);
+
             playerSprite.CanWalk = true;
             playerSprite.Scale = 3.0f;
 
@@ -150,7 +145,16 @@ namespace App05MonoGame
         private void SetupEnemy()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
-            enemySprite = CreateAnimatedSprite(sheet4x3);
+
+            AnimationManager manager = new AnimationManager(graphicsDevice, sheet4x3, 4, 3);
+
+            string[] keys = new string[] { "Down", "Left", "Right", "Up" };
+
+            manager.CreateAnimationGroup(keys);
+
+            enemySprite = new AnimatedSprite();
+            manager.AppendAnimationsTo(enemySprite);
+
             enemySprite.Scale = 3.0f;
             enemySprite.PlayAnimation("Left");
 
@@ -161,47 +165,6 @@ namespace App05MonoGame
             enemySprite.Rotation = MathHelper.ToRadians(0);
         }
 
-
-        private AnimatedSprite CreateAnimatedSprite(Texture2D sheet)
-        {
-            AnimationManager manager = new AnimationManager(graphicsDevice, sheet, 4, 3);
-            
-            manager.CreateAnimation("Down", 1);
-            manager.CreateAnimation("Left", 2);
-            manager.CreateAnimation("Right", 3);
-            manager.CreateAnimation("Up", 4);
-
-            AnimatedSprite animatedSprite = new AnimatedSprite();
-            
-            animatedSprite.Animations = manager.Animations;
-            animatedSprite.PlayAnimation("Right");
-            animatedSprite.Image = manager.FirstFrame;
-
-            return animatedSprite;
-        }
-
-        /// <summary>
-        /// TODO: get rid of this duplication
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <returns></returns>
-        private AnimatedPlayer CreateAnimatedPlayer(Texture2D sheet)
-        {
-            AnimationManager manager = new AnimationManager(graphicsDevice, sheet, 4, 3);
-
-            manager.CreateAnimation("Down", 1);
-            manager.CreateAnimation("Left", 2);
-            manager.CreateAnimation("Right", 3);
-            manager.CreateAnimation("Up", 4);
-
-            AnimatedPlayer animatedSprite = new AnimatedPlayer();
-
-            animatedSprite.Animations = manager.Animations;
-            animatedSprite.PlayAnimation("Right");
-            animatedSprite.Image = manager.FirstFrame;
-
-            return animatedSprite;
-        }
 
         /// <summary>
         /// Called 60 frames/per second and updates the positions
@@ -230,15 +193,10 @@ namespace App05MonoGame
             // Update Chase Game
 
             playerSprite.Update(gameTime);
-            coinSprite.Update(gameTime);
+            coinsController.Update(gameTime);
             enemySprite.Update(gameTime);
 
-            if (playerSprite.HasCollided(coinSprite))
-            {
-                coinSprite.IsActive = false;
-                coinSprite.IsAlive = false;
-                coinSprite.IsVisible = false;
-            }
+            coinsController.HasCollided(playerSprite);
 
             if (playerSprite.HasCollided(enemySprite))
             {
@@ -275,7 +233,7 @@ namespace App05MonoGame
             // Draw Chase game
 
             playerSprite.Draw(spriteBatch);
-            coinSprite.Draw(spriteBatch);
+            coinsController.Draw(spriteBatch);
             enemySprite.Draw(spriteBatch);
 
             spriteBatch.End();

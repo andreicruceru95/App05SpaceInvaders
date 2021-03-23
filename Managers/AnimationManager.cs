@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using App05MonoGame.Helpers;
 using System.Collections.Generic;
+using App05MonoGame.Sprites;
 
 namespace App05MonoGame.Managers
 {
@@ -27,6 +28,8 @@ namespace App05MonoGame.Managers
         private int frameCount;
 
         private int animationCount;
+
+        private string firstKey;
 
         private GraphicsDevice graphicsDevice;
 
@@ -98,6 +101,9 @@ namespace App05MonoGame.Managers
                     keyName, SpriteSheets[row - 1], frameCount);
                 
                 Animations.Add(keyName, animation);
+
+                if (firstKey == null)
+                    firstKey = keyName;
             }
         }
 
@@ -114,9 +120,29 @@ namespace App05MonoGame.Managers
                 {
                     row++;
                     CreateAnimation(key, row);
+                    if (firstKey == null)
+                        firstKey = key;
                 }
-
             }
+        }
+
+        public void AppendAnimationsTo(AnimatedSprite sprite)
+        {
+            if (sprite.Animations == null)
+                sprite.Animations = new Dictionary<string, Animation>();
+
+            foreach(var animation in Animations)
+            {
+                sprite.Animations.Add(animation.Key, animation.Value);
+            }
+
+            if (Animations.ContainsKey("Right"))
+            {
+                sprite.PlayAnimation("Right");
+            }
+            else sprite.PlayAnimation(firstKey);
+            
+            sprite.Image = FirstFrame;
         }
 
     }

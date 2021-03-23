@@ -5,7 +5,7 @@ using App05MonoGame.Models;
 namespace App05MonoGame.Sprites
 {
     /// <summary>
-    /// This classis an AnimatedSprite whose direction
+    /// This class is an AnimatedSprite whose direction
     /// can be controlled by the keyboard in four
     /// directions, up, down, left and right
     /// </summary>
