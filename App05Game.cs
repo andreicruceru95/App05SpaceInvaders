@@ -4,9 +4,23 @@ using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace App05MonoGame
 {
+    /// <summary>
+    /// This game creates a variety of sprites as an
+    /// example.  There is no game to play yet.
+    /// The spaceShip and the asteroid can be used
+    /// for a space shooting game, the player, the
+    /// coin and the enemy could be used for a pacman
+    /// style game where the player moves around collecting
+    /// random coins and the enemy tries to catch the
+    /// player.
+    /// </summary>
+    /// <authors>
+    /// Derek Peacock & Andrei Cruceru
+    /// </authors>
     public class App05Game : Game
     {
         // Constants
@@ -22,10 +36,13 @@ namespace App05MonoGame
 
         private Texture2D backgroundImage;
 
-        private Sprite enemySprite;
+        private PlayerSprite shipSprite;
+        private Sprite asteroidSprite;
 
         private AnimatedSprite playerSprite;
         private AnimatedSprite coinSprite;
+        private AnimatedSprite enemySprite;
+
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -34,7 +51,8 @@ namespace App05MonoGame
         }
 
         /// <summary>
-        /// Setup the game window size
+        /// Setup the game window size to 720P 1280 x 720 pixels
+        /// Simple fixed playing area with no camera or scrolling
         /// </summary>
         protected override void Initialize()
         {
@@ -55,8 +73,52 @@ namespace App05MonoGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            backgroundImage = Content.Load<Texture2D>("backgrounds/green_background720p");
-            Texture2D asteroid = Content.Load<Texture2D>("Actors/Stones2Filled_01");
+            backgroundImage = Content.Load<Texture2D>(
+                "backgrounds/green_background720p");
+
+            // suitable for asteroids type game
+
+            SetupSpaceShip();
+            SetupAsteroid();
+
+            // animated sprites suitable for pacman type game
+
+            SetupPlayer();
+            SetupCoin();
+            SetupEnemy();
+        }
+
+        private void SetupAsteroid()
+        {
+            Texture2D asteroid = Content.Load<Texture2D>(
+               "Actors/Stones2Filled_01");
+
+            asteroidSprite = new Sprite(asteroid, 1200, 600);
+            asteroidSprite.Direction = new Vector2(-1, 0);
+            asteroidSprite.Speed = 50;
+
+            asteroidSprite.Rotation = MathHelper.ToRadians(3);
+            asteroidSprite.RotationSpeed = 2f;
+
+        }
+
+        private void SetupSpaceShip()
+        {
+            Texture2D ship = Content.Load<Texture2D>(
+               "Actors/GreenShip");
+
+            shipSprite = new PlayerSprite(ship, 200, 600);
+            shipSprite.Direction = new Vector2(1, 0);
+
+        }
+
+        /// <summary>
+        /// Create an animated sprite of a copper coin
+        /// which could be collected by the player for
+        /// a score
+        /// </summary>
+        private void SetupCoin()
+        {
             Texture2D coin = Content.Load<Texture2D>("Actors/coin_copper");
 
             Animation animation = new Animation("coin", coin, 8);
@@ -68,24 +130,35 @@ namespace App05MonoGame
             coinSprite.Scale = 2.0f;
             coinSprite.Position = new Vector2(600, 100);
             coinSprite.Speed = 0;
-
-            SetupPlayer();
-            //SetupEnemy();
         }
-
         private void SetupPlayer()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
             playerSprite = CreateAnimatedSprite(sheet4x3);
+            playerSprite.Scale = 3.0f;
 
             playerSprite.Position = new Vector2(200, 200);
             playerSprite.Speed = 50;
             playerSprite.Direction = new Vector2(1, 0);
-            playerSprite.Scale = 4.0f;
 
             playerSprite.Rotation = MathHelper.ToRadians(0);
             playerSprite.RotationSpeed = 0f;
         }
+
+        private void SetupEnemy()
+        {
+            Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
+            enemySprite = CreateAnimatedSprite(sheet4x3);
+            enemySprite.Scale = 3.0f;
+            enemySprite.PlayAnimation("Left");
+
+            enemySprite.Position = new Vector2(1000, 200);
+            enemySprite.Direction = new Vector2(-1, 0);
+            enemySprite.Speed = 50;
+
+            enemySprite.Rotation = MathHelper.ToRadians(0);
+        }
+
 
         private AnimatedSprite CreateAnimatedSprite(Texture2D sheet)
         {
@@ -105,17 +178,6 @@ namespace App05MonoGame
             return animatedSprite;
         }
 
-        private void SetupEnemy()
-        {
-            //Texture2D sheet = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
-            //enemySprite = LoadSpriteSheet(sheet);
-            //enemySprite.Position = new Vector2(500, 100);
-            //enemySprite.Direction = new Vector2(-1, 0);
-            ////enemySprite.Rotation = MathHelper.ToRadians(-45);
-            //enemySprite.Speed = 100;
-        }
-
-
         /// <summary>
         /// Called 60 frames/per second and updates the positions
         /// of all the drawable objects
@@ -128,19 +190,39 @@ namespace App05MonoGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || 
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
-            // TODO: Add your update logic here
+            // Update Asteroids
+
+            shipSprite.Update(gameTime);
+            asteroidSprite.Update(gameTime);
+
+            if (shipSprite.HasCollided(asteroidSprite))
+            {
+                shipSprite.IsActive = false;
+                shipSprite.IsAlive = false;
+                shipSprite.IsVisible = false;
+            }
+
+            // Update Chase Game
 
             playerSprite.Update(gameTime);
             coinSprite.Update(gameTime);
+            enemySprite.Update(gameTime);
 
-            //enemySprite.Update(gameTime);
+            if (playerSprite.HasCollided(coinSprite))
+            {
+                coinSprite.IsActive = false;
+                coinSprite.IsAlive = false;
+                coinSprite.IsVisible = false;
+            }
 
-            //if (playerSprite.HasCollided(coinSprite))
-            //{
-            //    coinSprite.IsActive = false;
-            //    coinSprite.IsAlive = false;
-            //    coinSprite.IsVisible = false;
-            //}
+            if (playerSprite.HasCollided(enemySprite))
+            {
+                playerSprite.IsActive = false;
+                playerSprite.IsAlive = false;
+                playerSprite.IsVisible = false;
+
+                enemySprite.IsActive = false;
+            }
 
             base.Update(gameTime);
         }
@@ -159,11 +241,17 @@ namespace App05MonoGame
             spriteBatch.Begin();
 
             spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
-            
+
+            // Draw asteroids game
+
+            shipSprite.Draw(spriteBatch);
+            asteroidSprite.Draw(spriteBatch);
+
+            // Draw Chase game
+
             playerSprite.Draw(spriteBatch);
             coinSprite.Draw(spriteBatch);
-
-            //enemySprite.Draw(spriteBatch);
+            enemySprite.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
