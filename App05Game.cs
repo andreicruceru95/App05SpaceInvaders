@@ -39,7 +39,7 @@ namespace App05MonoGame
         private PlayerSprite shipSprite;
         private Sprite asteroidSprite;
 
-        private AnimatedSprite playerSprite;
+        private AnimatedPlayer playerSprite;
         private AnimatedSprite coinSprite;
         private AnimatedSprite enemySprite;
 
@@ -135,11 +135,12 @@ namespace App05MonoGame
         private void SetupPlayer()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
-            playerSprite = CreateAnimatedSprite(sheet4x3);
+            playerSprite = CreateAnimatedPlayer(sheet4x3);
+            playerSprite.CanWalk = true;
             playerSprite.Scale = 3.0f;
 
             playerSprite.Position = new Vector2(200, 200);
-            playerSprite.Speed = 50;
+            playerSprite.Speed = 200;
             playerSprite.Direction = new Vector2(1, 0);
 
             playerSprite.Rotation = MathHelper.ToRadians(0);
@@ -172,6 +173,29 @@ namespace App05MonoGame
 
             AnimatedSprite animatedSprite = new AnimatedSprite();
             
+            animatedSprite.Animations = manager.Animations;
+            animatedSprite.PlayAnimation("Right");
+            animatedSprite.Image = manager.FirstFrame;
+
+            return animatedSprite;
+        }
+
+        /// <summary>
+        /// TODO: get rid of this duplication
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <returns></returns>
+        private AnimatedPlayer CreateAnimatedPlayer(Texture2D sheet)
+        {
+            AnimationManager manager = new AnimationManager(graphicsDevice, sheet, 4, 3);
+
+            manager.CreateAnimation("Down", 1);
+            manager.CreateAnimation("Left", 2);
+            manager.CreateAnimation("Right", 3);
+            manager.CreateAnimation("Up", 4);
+
+            AnimatedPlayer animatedSprite = new AnimatedPlayer();
+
             animatedSprite.Animations = manager.Animations;
             animatedSprite.PlayAnimation("Right");
             animatedSprite.Image = manager.FirstFrame;
