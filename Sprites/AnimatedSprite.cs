@@ -38,7 +38,7 @@ namespace App05MonoGame.Sprites
 
         public override void Update(GameTime gameTime)
         {
-            if(Animation != null)
+            if(Animation != null && IsActive)
             {
                 sourceRectangle = Animation.Update(gameTime);
             }
@@ -50,14 +50,14 @@ namespace App05MonoGame.Sprites
         {
             // SourceRectangle should never be empty now as Animation.Update will always 
             //return a frame.
-            if (Animation != null)// && sourceRectangle != Rectangle.Empty)            
+            if (Animation != null && IsVisible)// && sourceRectangle != Rectangle.Empty)            
             {
                 spriteBatch.Draw //This will now draw either a new frame or the previous frame.
                         (Animation.FrameSet,
                          Position,
                          sourceRectangle,
                          Color.White, Rotation, Origin,
-                         Scale, SpriteEffects.None, 1);                         
+                         Scale, SpriteEffects.None, 1);
             }
             else  
                 base.Draw(spriteBatch); 

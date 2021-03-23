@@ -89,7 +89,7 @@ namespace App05MonoGame.Managers
                     frameWidth, frameHeight);
             }
             // this will return the previous frame instead of an empty rectangle
-            // so we are always drawing an image.
+            //// so we are always drawing an image.
             return new Rectangle((CurrentFrame) * frameWidth, 0,
                     frameWidth, frameHeight);
         }        

@@ -73,7 +73,10 @@ namespace App05MonoGame.Sprites
 
             if(control == DirectionControl.FourDirections)
             {
-                ChangeDirection(keyState);
+                Vector2 newDirection = ChangeDirection(keyState);
+
+                if (newDirection != Vector2.Zero)
+                    Direction = newDirection;
             }
             else if(control == DirectionControl.Rotational)
             {
@@ -107,32 +110,35 @@ namespace App05MonoGame.Sprites
             }
         }
 
-        private void ChangeDirection(KeyboardState keyState)
+        private Vector2 ChangeDirection(KeyboardState keyState)
         {
+            Direction = Vector2.Zero;
+
             if (keyState.IsKeyDown(InputKeys.Right))
             {
                 Direction = new Vector2(1, 0);
-                IsActive = true;
+                //IsActive = true;
             }
 
             if (keyState.IsKeyDown(InputKeys.Left))
             {
                 Direction = new Vector2(-1, 0);
-                IsActive = true;
+                //IsActive = true;
             }
 
             if (keyState.IsKeyDown(InputKeys.Up))
             {
                 Direction = new Vector2(0, -1);
-                IsActive = true;
+                //IsActive = true;
             }
 
             if (keyState.IsKeyDown(InputKeys.Down))
             {
                 Direction = new Vector2(0, 1);
-                IsActive = true;
+                //IsActive = true;
             }
 
+            return Direction;
         }
     }
 }
