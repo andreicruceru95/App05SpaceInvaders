@@ -7,6 +7,9 @@ using System.Text;
 
 namespace App05MonoGame.Managers
 {
+    /// <summary>
+    /// Sound Controller will manage any sounds in the game.
+    /// </summary>
     public static class SoundController
     {
         public static Dictionary<string, Song> Songs =
@@ -14,6 +17,10 @@ namespace App05MonoGame.Managers
         public static Dictionary<string, SoundEffect> SoundEffects = 
             new Dictionary<string, SoundEffect>();
         
+        /// <summary>
+        /// Load songs and sound effects.
+        /// </summary>
+        /// <param name="content"></param>
         public static void LoadContent(ContentManager content)
         {
             Songs.Add("Adventure",content.Load<Song>("Sounds/Adventures"));            
@@ -21,12 +28,19 @@ namespace App05MonoGame.Managers
             SoundEffects.Add("Coin", content.Load<SoundEffect>("Sounds/Coins"));
             SoundEffects.Add("Flame", content.Load<SoundEffect>("Sounds/flame"));
         }
-
+        /// <summary>
+        /// Get a sound effect from the collection.
+        /// </summary>
+        /// <param name="effect">A string type key assigned to a sound effect.</param>
+        /// <returns>A SoundEffect object assigned to the string key.</returns>
         public static SoundEffect GetSoundEffect(string effect)
         {
             return SoundEffects[effect];
         }
-
+        /// <summary>
+        /// Play a song
+        /// </summary>
+        /// <param name="song">A string type key assigned to a song.</param>
         public static void PlaySong(string song)
         {
             MediaPlayer.IsRepeating = true;
