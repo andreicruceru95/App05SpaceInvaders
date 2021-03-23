@@ -1,4 +1,5 @@
-﻿using App05MonoGame.Models;
+﻿using App05MonoGame.Managers;
+using App05MonoGame.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -22,31 +23,16 @@ namespace App05MonoGame.Sprites
     /// </authors>
     public class PlayerSprite : Sprite
     {
-        public InputKeys InputKeys { get; set; }
+        private MovementController movement;
 
-        private DirectionControl control;
+        public DirectionControl DirectionControl { get; set; }
 
         private KeyboardState lastKeyState;
         
         public PlayerSprite(): base()
         {
-            control = DirectionControl.Rotational;
-
-            InputKeys = new InputKeys()
-            {
-                // For directions
-
-                Up = Keys.Up,
-                Down = Keys.Down,
-                Left = Keys.Left,
-                Right = Keys.Right,
-                
-                // Rotate and Move
-
-                TurnLeft = Keys.A,
-                TurnRight = Keys.D,
-                Forward = Keys.Space
-            };
+            DirectionControl = DirectionControl.Rotational;
+            movement = new MovementController();
         }
 
         /// <summary>
@@ -61,7 +47,7 @@ namespace App05MonoGame.Sprites
 
         public void SetControl(DirectionControl control)
         {
-            this.control = control;
+            this.DirectionControl = control;
         }
 
         public override void Update(GameTime gameTime)
@@ -71,14 +57,17 @@ namespace App05MonoGame.Sprites
             IsActive = false;
             RotationSpeed = 0;
 
-            if(control == DirectionControl.FourDirections)
+            if(DirectionControl == DirectionControl.FourDirections)
             {
-                Vector2 newDirection = ChangeDirection(keyState);
+                Vector2 newDirection = movement.ChangeDirection(keyState);
 
                 if (newDirection != Vector2.Zero)
+                {
                     Direction = newDirection;
+                    IsActive = true;
+                }
             }
-            else if(control == DirectionControl.Rotational)
+            else if(DirectionControl == DirectionControl.Rotational)
             {
                 Rotate(keyState);
             }
@@ -91,54 +80,24 @@ namespace App05MonoGame.Sprites
         private void Rotate(KeyboardState keyState)
         {
 
-            if (keyState.IsKeyDown(InputKeys.TurnRight))
+            if (keyState.IsKeyDown(movement.InputKeys.TurnRight))
             {
                 if (RotationSpeed == 0) RotationSpeed = 1.0f;
                 Rotation += MathHelper.ToRadians(RotationSpeed);
                 Direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
             }
-            else if (keyState.IsKeyDown(InputKeys.TurnLeft))
+            else if (keyState.IsKeyDown(movement.InputKeys.TurnLeft))
             {
                 if (RotationSpeed == 0) RotationSpeed = 1.0f;
                 Rotation -= MathHelper.ToRadians(RotationSpeed);
                 Direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
             }
 
-            if (keyState.IsKeyDown(InputKeys.Forward))
+            if (keyState.IsKeyDown(movement.InputKeys.Forward))
             {
                 IsActive = true;
             }
         }
 
-        private Vector2 ChangeDirection(KeyboardState keyState)
-        {
-            Direction = Vector2.Zero;
-
-            if (keyState.IsKeyDown(InputKeys.Right))
-            {
-                Direction = new Vector2(1, 0);
-                //IsActive = true;
-            }
-
-            if (keyState.IsKeyDown(InputKeys.Left))
-            {
-                Direction = new Vector2(-1, 0);
-                //IsActive = true;
-            }
-
-            if (keyState.IsKeyDown(InputKeys.Up))
-            {
-                Direction = new Vector2(0, -1);
-                //IsActive = true;
-            }
-
-            if (keyState.IsKeyDown(InputKeys.Down))
-            {
-                Direction = new Vector2(0, 1);
-                //IsActive = true;
-            }
-
-            return Direction;
-        }
     }
 }

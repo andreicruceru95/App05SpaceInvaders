@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using App05MonoGame.Models;
+using App05MonoGame.Managers;
 
 namespace App05MonoGame.Sprites
 {
@@ -14,23 +15,14 @@ namespace App05MonoGame.Sprites
     /// </authors>
     public class AnimatedPlayer : AnimatedSprite
     {
-        public InputKeys InputKeys { get; set; }
-
         public bool CanWalk { get; set; }
- 
+
+        private MovementController movement;
+
         public AnimatedPlayer() : base()
         {
             CanWalk = false;
-
-            InputKeys = new InputKeys()
-            {
-                // For directions
-
-                Up = Keys.Up,
-                Down = Keys.Down,
-                Left = Keys.Left,
-                Right = Keys.Right,
-            };
+            movement = new MovementController();
         }
 
         /// <summary>
@@ -43,27 +35,11 @@ namespace App05MonoGame.Sprites
 
             IsActive = false;
 
-            if (keyState.IsKeyDown(InputKeys.Right))
-            {
-                Direction = new Vector2(1, 0);
-                IsActive = true;
-            }
+            Vector2 newDirection = movement.ChangeDirection(keyState);
 
-            if (keyState.IsKeyDown(InputKeys.Left))
+            if (newDirection != Vector2.Zero)
             {
-                Direction = new Vector2(-1, 0);
-                IsActive = true;
-            }
-
-            if (keyState.IsKeyDown(InputKeys.Up))
-            {
-                Direction = new Vector2(0, -1);
-                IsActive = true;
-            }
-
-            if (keyState.IsKeyDown(InputKeys.Down))
-            {
-                Direction = new Vector2(0, 1);
+                Direction = newDirection;
                 IsActive = true;
             }
 

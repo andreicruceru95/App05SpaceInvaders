@@ -87,7 +87,7 @@ namespace App05MonoGame
 
             // animated sprites suitable for pacman type game
 
-            SetupPlayer();
+            SetupAnimatedPlayer();
             SetupEnemy();
 
             Texture2D coinSheet = Content.Load<Texture2D>("Actors/coin_copper");
@@ -125,6 +125,7 @@ namespace App05MonoGame
             shipSprite = new PlayerSprite(ship, 200, 500);
             shipSprite.Direction = new Vector2(1, 0);
             shipSprite.Speed = 200;
+            shipSprite.DirectionControl = DirectionControl.Rotational;
         }
 
 
@@ -132,7 +133,7 @@ namespace App05MonoGame
         /// This is a Sprite with four animations for the four
         /// directions, up, down, left and right
         /// </summary>
-        private void SetupPlayer()
+        private void SetupAnimatedPlayer()
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
 
