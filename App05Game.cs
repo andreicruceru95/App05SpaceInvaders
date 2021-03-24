@@ -35,6 +35,9 @@ namespace App05MonoGame
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
 
+        private SpriteFont arialFont;
+        private SpriteFont calibriFont;
+
         private Texture2D backgroundImage;
         private SoundEffect flameEffect;
 
@@ -47,6 +50,8 @@ namespace App05MonoGame
         private AnimatedSprite coinSprite;
         private AnimatedSprite enemySprite;
 
+        private int score;
+        private int health;
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -69,21 +74,32 @@ namespace App05MonoGame
 
             graphicsDevice = graphicsManager.GraphicsDevice;
 
+            score = 0;
+            health = 100;
+
             base.Initialize();
         }
 
         /// <summary>
-        /// use Content to load your game images and other content here
+        /// use Content to load your game images, fonts,
+        /// music and sound effects
         /// </summary>
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            backgroundImage = Content.Load<Texture2D>(
+                "backgrounds/green_background720p");
+
+            // Load Music and SoundEffects
+
             SoundController.LoadContent(Content);
             SoundController.PlaySong("Adventure");
             flameEffect = SoundController.GetSoundEffect("Flame");
 
-            backgroundImage = Content.Load<Texture2D>(
-                "backgrounds/green_background720p");
+            // Load Fonts
+
+            arialFont = Content.Load<SpriteFont>("fonts/arial");
+            calibriFont = Content.Load<SpriteFont>("fonts/calibri");
 
             // suitable for asteroids type game
 
@@ -228,8 +244,6 @@ namespace App05MonoGame
                 playerSprite.IsActive = false;
                 playerSprite.IsAlive = false;
                 playerSprite.IsVisible = false;
-
-                //enemySprite.IsActive = false;
             }
 
             base.Update(gameTime);
@@ -261,8 +275,51 @@ namespace App05MonoGame
             coinsController.Draw(spriteBatch);
             enemySprite.Draw(spriteBatch);
 
+            DrawGameStatus(spriteBatch);
+            DrawGameFooter(spriteBatch);
+
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        public void DrawGameStatus(SpriteBatch spriteBatch)
+        {
+            Vector2 topLeft = new Vector2(4, 4);
+            string status = $"Score = {score:##0}";
+
+            spriteBatch.DrawString(arialFont, status, topLeft, Color.White);
+
+            string game = "Coin Chase";
+            Vector2 gameSize = arialFont.MeasureString(game);
+            Vector2 topCentre = new Vector2((HD_Width/2 - gameSize.X/2), 4);
+            spriteBatch.DrawString(arialFont, game, topCentre, Color.White);
+
+            string healthText = $"Health = {health}%";
+            Vector2 healthSize = arialFont.MeasureString(healthText);
+            Vector2 topRight = new Vector2(HD_Width - (healthSize.X + 4), 4);
+            spriteBatch.DrawString(arialFont, healthText, topRight, Color.White);
+
+        }
+
+        public void DrawGameFooter(SpriteBatch spriteBatch)
+        {
+            int margin = 20;
+
+            string names = "Derek & Andrei";
+            string app = "App05: MonogGame";
+            string module = "BNU CO453-2020";
+
+            Vector2 namesSize = calibriFont.MeasureString(names);
+            Vector2 appSize = calibriFont.MeasureString(app);
+
+            Vector2 bottomCentre = new Vector2((HD_Width - namesSize.X)/ 2, HD_Height - margin);
+            Vector2 bottomLeft = new Vector2(margin, HD_Height - margin);
+            Vector2 bottomRight = new Vector2(HD_Width - appSize.X - margin, HD_Height - margin);
+
+            spriteBatch.DrawString(calibriFont, names, bottomCentre, Color.Yellow);
+            spriteBatch.DrawString(calibriFont, module, bottomLeft, Color.Yellow);
+            spriteBatch.DrawString(calibriFont, app, bottomRight, Color.Yellow);
+
         }
     }
 }

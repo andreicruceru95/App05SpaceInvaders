@@ -8,12 +8,16 @@ using System.Text;
 namespace App05MonoGame.Managers
 {
     /// <summary>
-    /// Sound Controller will manage any sounds in the game.
+    /// Sound Controller will manage any sounds or music in the game.
     /// </summary>
+    /// <author>
+    /// Andrei Cruceru
+    /// </author>
     public static class SoundController
     {
         public static Dictionary<string, Song> Songs =
             new Dictionary<string, Song>();
+
         public static Dictionary<string, SoundEffect> SoundEffects = 
             new Dictionary<string, SoundEffect>();
         
@@ -46,6 +50,16 @@ namespace App05MonoGame.Managers
             MediaPlayer.IsRepeating = true;
 
             MediaPlayer.Play(Songs[song]);
+        }
+
+        public static void PauseSong()
+        {
+            MediaPlayer.Pause();
+        }
+
+        public static void ResumeSong()
+        {
+            MediaPlayer.Resume();
         }
     }
 }
