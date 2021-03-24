@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace App05MonoGame.Helpers
 {
-    public class TextHelper
+    public static class TextHelper
     {
-        public static SpriteFont Font;
-        public static SpriteBatch SpriteBatch;
+        private static SpriteFont Font;
+        private static SpriteBatch SpriteBatch;
 
         public static void LoadFont(
             ContentManager content, SpriteBatch spriteBatch)
