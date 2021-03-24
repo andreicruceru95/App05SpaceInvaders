@@ -19,19 +19,19 @@ namespace App05MonoGame.Controllers
         // Original SpriteSheet rows * cols or frames
         public Texture2D SpriteSheet { get; set; }
 
-        private int sheetWidth;
+        private readonly int sheetWidth;
 
-        private int frameHeight;
+        private readonly int frameHeight;
 
-        private int frameWidth;
+        private readonly int frameWidth;
 
-        private int frameCount;
+        private readonly int frameCount;
 
-        private int animationCount;
+        private readonly int animationCount;
 
         private string firstKey;
 
-        private GraphicsDevice graphicsDevice;
+        private readonly GraphicsDevice graphicsDevice;
 
         // A key image for the base sprite
         public Texture2D FirstFrame { get; set; }

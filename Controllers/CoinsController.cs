@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 
 
@@ -25,10 +24,14 @@ namespace App05MonoGame.Controllers
     /// </authors>
     public class CoinsController
     {
-        SoundEffect coinEffect;
+        private SoundEffect coinEffect;
 
-        public List<AnimatedSprite> Coins = new List<AnimatedSprite>();        
+        private readonly List<AnimatedSprite> Coins;        
 
+        public CoinsController()
+        {
+            Coins = new List<AnimatedSprite>();
+        }
         /// <summary>
         /// Create an animated sprite of a copper coin
         /// which could be collected by the player for a score
@@ -38,13 +41,14 @@ namespace App05MonoGame.Controllers
             coinEffect = SoundController.GetSoundEffect("Coin");
             Animation animation = new Animation("coin", coinSheet, 8);
 
-            AnimatedSprite coin = new AnimatedSprite();
-            coin.Animation = animation;
-            coin.Image = animation.SetMainFrame(graphics);
-
-            coin.Scale = 2.0f;
-            coin.Position = new Vector2(600, 100);
-            coin.Speed = 0;
+            AnimatedSprite coin = new AnimatedSprite()
+            {
+                Animation = animation,
+                Image = animation.SetMainFrame(graphics),
+                Scale = 2.0f,
+                Position = new Vector2(600, 100),
+                Speed = 0,
+            };
 
             Coins.Add(coin);
         }

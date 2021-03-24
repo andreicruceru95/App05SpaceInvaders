@@ -22,12 +22,10 @@ namespace App05MonoGame.Models
     /// </authors>
     public class PlayerSprite : Sprite
     {
-        private MovementController movement;
+        private readonly MovementController movement;
 
         public DirectionControl DirectionControl { get; set; }
 
-        private KeyboardState lastKeyState;
-        
         public PlayerSprite(): base()
         {
             DirectionControl = DirectionControl.Rotational;
@@ -73,7 +71,6 @@ namespace App05MonoGame.Models
 
             base.Update(gameTime);
 
-            lastKeyState = keyState;
         }
 
         private void Rotate(KeyboardState keyState)

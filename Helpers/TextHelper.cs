@@ -22,6 +22,5 @@ namespace App05MonoGame.Helpers
                 new Vector2(position.X, position.Y - 20),
                 Color.White);
         }
-
     }
 }

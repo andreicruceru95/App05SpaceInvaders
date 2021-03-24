@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Media;
-using System;
 using System.Collections.Generic;
-using System.Text;
+
 
 namespace App05MonoGame.Controllers
 {
@@ -15,10 +14,10 @@ namespace App05MonoGame.Controllers
     /// </author>
     public static class SoundController
     {
-        public static Dictionary<string, Song> Songs =
+        private static readonly Dictionary<string, Song> Songs =
             new Dictionary<string, Song>();
 
-        public static Dictionary<string, SoundEffect> SoundEffects = 
+        private static readonly Dictionary<string, SoundEffect> SoundEffects = 
             new Dictionary<string, SoundEffect>();
         
         /// <summary>

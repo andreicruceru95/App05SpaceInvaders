@@ -48,12 +48,12 @@ namespace App05MonoGame.Models
 
         public int Width
         {
-            get { return (int)(Image.Width); }
+            get { return Image.Width; }
         }
 
         public int Height
         {
-            get { return (int)(Image.Height); }
+            get { return Image.Height; }
         }
 
         // The rectangle occupied by the unscaled image

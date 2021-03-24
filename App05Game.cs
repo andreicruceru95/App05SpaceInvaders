@@ -27,7 +27,7 @@ namespace App05MonoGame
 
         // Variables
 
-        private GraphicsDeviceManager graphicsManager;
+        private readonly GraphicsDeviceManager graphicsManager;
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
 
@@ -37,13 +37,12 @@ namespace App05MonoGame
         private Texture2D backgroundImage;
         private SoundEffect flameEffect;
 
-        private CoinsController coinsController;
+        private readonly CoinsController coinsController;
 
         private PlayerSprite shipSprite;
         private Sprite asteroidSprite;
 
         private AnimatedPlayer playerSprite;
-        private AnimatedSprite coinSprite;
         private AnimatedSprite enemySprite;
 
         private int score;
@@ -120,14 +119,16 @@ namespace App05MonoGame
             Texture2D asteroid = Content.Load<Texture2D>(
                "Actors/Stones2Filled_01");
 
-            asteroidSprite = new Sprite(asteroid, 1200, 500);
-            asteroidSprite.Direction = new Vector2(-1, 0);
-            asteroidSprite.Speed = 100;
+            asteroidSprite = new Sprite(asteroid, 1200, 500)
+            {
+                Direction = new Vector2(-1, 0),
+                Speed = 100,
 
-            asteroidSprite.Rotation = MathHelper.ToRadians(3);
-            asteroidSprite.RotationSpeed = 2f;
+                Rotation = MathHelper.ToRadians(3),
+                RotationSpeed = 2f,
+            };
 
-        }
+    }
 
         /// <summary>
         /// This is a Sprite that can be controlled by a
@@ -139,11 +140,13 @@ namespace App05MonoGame
             Texture2D ship = Content.Load<Texture2D>(
                "Actors/GreenShip");
 
-            shipSprite = new PlayerSprite(ship, 200, 500);
-            shipSprite.Direction = new Vector2(1, 0);
-            shipSprite.Speed = 200;
-            shipSprite.DirectionControl = DirectionControl.Rotational;
-        }
+            shipSprite = new PlayerSprite(ship, 200, 500)
+            {
+                Direction = new Vector2(1, 0),
+                Speed = 200,
+                DirectionControl = DirectionControl.Rotational
+            };
+    }
 
 
         /// <summary>
@@ -240,7 +243,6 @@ namespace App05MonoGame
             {
                 playerSprite.IsActive = false;
                 playerSprite.IsAlive = false;
-                //playerSprite.IsVisible = false;
                 enemySprite.IsActive = false;
             }
 

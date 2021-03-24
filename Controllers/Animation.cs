@@ -23,9 +23,9 @@ namespace App05MonoGame.Controllers
         public bool IsLooping { get; set; }
         public int FramesPerSecond { get; set; }
 
-        private int NumberOfFrames;
-        private int frameWidth;
-        private int frameHeight;
+        private readonly int NumberOfFrames;
+        private readonly int frameWidth;
+        private readonly int frameHeight;
         
         private float elapsedTime;
         private float maxFrameTime;

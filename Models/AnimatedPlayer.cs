@@ -16,7 +16,7 @@ namespace App05MonoGame.Models
     {
         public bool CanWalk { get; set; }
 
-        private MovementController movement;
+        private readonly MovementController movement;
 
         public AnimatedPlayer() : base()
         {
@@ -25,9 +25,10 @@ namespace App05MonoGame.Models
         }
 
         /// <summary>
-        /// TODO: Get rid of this duplication
+        /// If the sprite has animations for walking in the
+        /// four directions then it switches between the
+        /// animations depending on the direction
         /// </summary>
-        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
             KeyboardState keyState = Keyboard.GetState();
@@ -47,6 +48,11 @@ namespace App05MonoGame.Models
             base.Update(gameTime);
         }
 
+        /// <summary>
+        /// Switch between the four walk animations depending
+        /// on the direction.  Will not look quite right
+        /// with 45 degree directions
+        /// </summary>
         private void Walk()
         {
             if (Animations.Count >= 4)
@@ -64,6 +70,5 @@ namespace App05MonoGame.Models
                     Animation = Animations["Up"];
             }
         }
-
     }
 }
