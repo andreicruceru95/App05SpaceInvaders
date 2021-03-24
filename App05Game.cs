@@ -162,18 +162,20 @@ namespace App05MonoGame
             string[] keys = new string[] { "Down", "Left", "Right", "Up" };
             manager.CreateAnimationGroup(keys);
 
-            playerSprite = new AnimatedPlayer();
+            playerSprite = new AnimatedPlayer()
+            {
+                CanWalk = true,
+                Scale = 2.0f,
+
+                Position = new Vector2(200, 200),
+                Speed = 200,
+                Direction = new Vector2(1, 0),
+
+                Rotation = MathHelper.ToRadians(0),
+                RotationSpeed = 0f
+            };
+
             manager.AppendAnimationsTo(playerSprite);
-
-            playerSprite.CanWalk = true;
-            playerSprite.Scale = 2.0f;
-
-            playerSprite.Position = new Vector2(200, 200);
-            playerSprite.Speed = 200;
-            playerSprite.Direction = new Vector2(1, 0);
-
-            playerSprite.Rotation = MathHelper.ToRadians(0);
-            playerSprite.RotationSpeed = 0f;
         }
 
         /// <summary>
@@ -190,17 +192,19 @@ namespace App05MonoGame
 
             manager.CreateAnimationGroup(keys);
 
-            enemySprite = new AnimatedSprite();
+            enemySprite = new AnimatedSprite()
+            {
+                Scale = 2.0f,
+
+                Position = new Vector2(1000, 200),
+                Direction = new Vector2(-1, 0),
+                Speed = 50,
+
+                Rotation = MathHelper.ToRadians(0),
+            };
+
             manager.AppendAnimationsTo(enemySprite);
-
-            enemySprite.Scale = 2.0f;
             enemySprite.PlayAnimation("Left");
-
-            enemySprite.Position = new Vector2(1000, 200);
-            enemySprite.Direction = new Vector2(-1, 0);
-            enemySprite.Speed = 50;
-
-            enemySprite.Rotation = MathHelper.ToRadians(0);
         }
 
 
@@ -234,10 +238,7 @@ namespace App05MonoGame
             // Update Chase Game
 
             playerSprite.Update(gameTime);
-            coinsController.Update(gameTime);
             enemySprite.Update(gameTime);
-
-            coinsController.HasCollided(playerSprite);
 
             if (playerSprite.HasCollided(enemySprite))
             {
@@ -245,6 +246,9 @@ namespace App05MonoGame
                 playerSprite.IsAlive = false;
                 enemySprite.IsActive = false;
             }
+
+            coinsController.Update(gameTime);
+            coinsController.HasCollided(playerSprite);
 
             base.Update(gameTime);
         }
