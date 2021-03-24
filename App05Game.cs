@@ -1,23 +1,19 @@
-﻿using App05MonoGame.Helpers;
-using App05MonoGame.Managers;
+﻿using App05MonoGame.Managers;
 using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 
 namespace App05MonoGame
 {
     /// <summary>
-    /// This game creates a variety of sprites as an
-    /// example.  There is no game to play yet.
-    /// The spaceShip and the asteroid can be used
-    /// for a space shooting game, the player, the
-    /// coin and the enemy could be used for a pacman
+    /// This game creates a variety of sprites as an example.  
+    /// There is no game to play yet. The spaceShip and the 
+    /// asteroid can be used for a space shooting game, the player, 
+    /// the coin and the enemy could be used for a pacman
     /// style game where the player moves around collecting
-    /// random coins and the enemy tries to catch the
-    /// player.
+    /// random coins and the enemy tries to catch the player.
     /// </summary>
     /// <authors>
     /// Derek Peacock & Andrei Cruceru
@@ -178,8 +174,8 @@ namespace App05MonoGame
         }
 
         /// <summary>
-        /// This is a Sprite with four animations for the four
-        /// directions, up, down, left and right
+        /// This is an enemy Sprite with four animations for the four
+        /// directions, up, down, left and right.  Has no intelligence!
         /// </summary>
         private void SetupEnemy()
         {
@@ -210,7 +206,8 @@ namespace App05MonoGame
         /// of all the drawable objects
         /// </summary>
         /// <param name="gameTime">
-        /// Can work out the elapsed time since last call
+        /// Can work out the elapsed time since last call if
+        /// you want to compensate for different frame rates
         /// </param>
         protected override void Update(GameTime gameTime)
         {
@@ -253,9 +250,6 @@ namespace App05MonoGame
         /// Called 60 frames/per second and Draw all the 
         /// sprites and other drawable images here
         /// </summary>
-        /// <param name="gameTime">
-        /// Can work out the elapsed time since last call
-        /// </param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.LawnGreen);
@@ -282,6 +276,10 @@ namespace App05MonoGame
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Display the name fo the game and the current score
+        /// and health of the player at the top of the screen
+        /// </summary>
         public void DrawGameStatus(SpriteBatch spriteBatch)
         {
             Vector2 topLeft = new Vector2(4, 4);
@@ -301,6 +299,10 @@ namespace App05MonoGame
 
         }
 
+        /// <summary>
+        /// Display the Module, the authors and the application name
+        /// at the bottom of the screen
+        /// </summary>
         public void DrawGameFooter(SpriteBatch spriteBatch)
         {
             int margin = 20;
