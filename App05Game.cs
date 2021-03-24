@@ -1,4 +1,4 @@
-﻿using App05MonoGame.Managers;
+﻿using App05MonoGame.Controllers;
 using App05MonoGame.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -154,7 +154,7 @@ namespace App05MonoGame
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
 
-            AnimationManager manager = new AnimationManager(graphicsDevice, sheet4x3, 4, 3);
+            AnimationController manager = new AnimationController(graphicsDevice, sheet4x3, 4, 3);
 
             string[] keys = new string[] { "Down", "Left", "Right", "Up" };
             manager.CreateAnimationGroup(keys);
@@ -181,7 +181,7 @@ namespace App05MonoGame
         {
             Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
 
-            AnimationManager manager = new AnimationManager(graphicsDevice, sheet4x3, 4, 3);
+            AnimationController manager = new AnimationController(graphicsDevice, sheet4x3, 4, 3);
 
             string[] keys = new string[] { "Down", "Left", "Right", "Up" };
 

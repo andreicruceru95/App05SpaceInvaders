@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace App05MonoGame.Managers
+namespace App05MonoGame.Controllers
 {
     public class MovementController
     {

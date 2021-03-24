@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace App05MonoGame.Managers
+namespace App05MonoGame.Controllers
 {
     /// <summary>
     /// Sound Controller will manage any sounds or music in the game.

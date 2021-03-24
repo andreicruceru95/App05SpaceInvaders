@@ -1,5 +1,4 @@
-﻿using App05MonoGame.Managers;
-using App05MonoGame.Models;
+﻿using App05MonoGame.Controllers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

@@ -1,11 +1,8 @@
 ﻿using App05MonoGame.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace App05MonoGame.Managers
+namespace App05MonoGame.Controllers
 {
     /// <summary>
     /// This class takes a sprite sheet with one row

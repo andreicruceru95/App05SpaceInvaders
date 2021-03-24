@@ -4,7 +4,7 @@ using App05MonoGame.Helpers;
 using System.Collections.Generic;
 using App05MonoGame.Sprites;
 
-namespace App05MonoGame.Managers
+namespace App05MonoGame.Controllers
 {
     /// <summary>
     /// This class takes a sprite sheet which may have many
@@ -14,7 +14,7 @@ namespace App05MonoGame.Managers
     /// <authors>
     /// Derek Peacock & Andrei Cruceru
     /// </authors>
-    public class AnimationManager
+    public class AnimationController
     {
         // Original SpriteSheet rows * cols or frames
         public Texture2D SpriteSheet { get; set; }
@@ -46,7 +46,7 @@ namespace App05MonoGame.Managers
         /// array of sheets and new dictionary of
         /// Animations.
         /// </summary>
-        public AnimationManager(GraphicsDevice graphics,
+        public AnimationController(GraphicsDevice graphics,
             Texture2D sheet, int rows, int columns)
         {
             graphicsDevice = graphics;

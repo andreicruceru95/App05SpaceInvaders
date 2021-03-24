@@ -1,4 +1,4 @@
-﻿using App05MonoGame.Managers;
+﻿using App05MonoGame.Controllers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;

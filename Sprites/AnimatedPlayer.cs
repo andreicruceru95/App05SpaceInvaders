@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using App05MonoGame.Models;
-using App05MonoGame.Managers;
+using App05MonoGame.Controllers;
 
 namespace App05MonoGame.Sprites
 {

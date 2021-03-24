@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace App05MonoGame.Managers
+namespace App05MonoGame.Controllers
 {
     public enum CoinColours
     {
