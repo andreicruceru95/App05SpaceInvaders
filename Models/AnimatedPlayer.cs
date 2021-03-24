@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using App05MonoGame.Controllers;
 
-namespace App05MonoGame.Sprites
+namespace App05MonoGame.Models
 {
     /// <summary>
     /// This class is an AnimatedSprite whose direction

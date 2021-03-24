@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using App05MonoGame.Helpers;
 using System.Collections.Generic;
-using App05MonoGame.Sprites;
+using App05MonoGame.Models;
 
 namespace App05MonoGame.Controllers
 {

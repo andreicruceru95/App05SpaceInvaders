@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
 
-namespace App05MonoGame.Sprites
+namespace App05MonoGame.Models
 {
     /// <summary>
     /// This class contains at least one animation,

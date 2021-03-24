@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace App05MonoGame.Sprites
+namespace App05MonoGame.Models
 {
     /// <summary>
     /// This is a basic sprite which has a single image which

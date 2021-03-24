@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
-namespace App05MonoGame.Sprites
+namespace App05MonoGame.Models
 {
     /// <summary>
     /// These keys can be defined to match
