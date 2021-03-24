@@ -240,7 +240,8 @@ namespace App05MonoGame
             {
                 playerSprite.IsActive = false;
                 playerSprite.IsAlive = false;
-                playerSprite.IsVisible = false;
+                //playerSprite.IsVisible = false;
+                enemySprite.IsActive = false;
             }
 
             base.Update(gameTime);

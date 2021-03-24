@@ -5,6 +5,16 @@ using System;
 
 namespace App05MonoGame.Sprites
 {
+    /// <summary>
+    /// This is a basic sprite which has a single image which
+    /// can be scaled and rotated around an origin.  The Bounding
+    /// Box is the Rectangle the image occupies, and the Bounday
+    /// if it exists is the area inside outside which the Sprite can
+    /// not move.  Direction is a Vector such as (0, 1) which indicate
+    /// the down direction, and Speed is the rate of movement.  A
+    /// Speed of 60 is one pixel per second.  The Sprite can only
+    /// move if it is Active and Alive.
+    /// </summary>
     public class Sprite: ICloneable
     {
         // Single Image
@@ -100,7 +110,15 @@ namespace App05MonoGame.Sprites
 
         public bool HasCollided(Sprite other)
         {
-            return BoundingBox.Intersects(other.BoundingBox);
+            if(BoundingBox.Intersects(other.BoundingBox))
+            {
+                int margin = 8 * (int)Scale;
+                Rectangle overlap = Rectangle.Intersect(BoundingBox, other.BoundingBox);
+                if(overlap.Width > margin)
+                    return true;
+            }
+
+            return false;
         }
 
         public virtual void Update(GameTime gameTime)
