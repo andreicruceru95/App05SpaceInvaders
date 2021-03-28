@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using App05MonoGame.Controllers;
+using System.Collections.Generic;
 
 namespace App05MonoGame.Models
 {
@@ -29,7 +30,7 @@ namespace App05MonoGame.Models
         /// four directions then it switches between the
         /// animations depending on the direction
         /// </summary>
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
             KeyboardState keyState = Keyboard.GetState();
 
@@ -45,13 +46,13 @@ namespace App05MonoGame.Models
 
             if (CanWalk) Walk();
 
-            base.Update(gameTime);
+            base.Update(gameTime, sprites);
         }
 
         /// <summary>
         /// Switch between the four walk animations depending
         /// on the direction.  Will not look quite right
-        /// with 45 degree directions
+        // with 45 degree directions
         /// </summary>
         private void Walk()
         {

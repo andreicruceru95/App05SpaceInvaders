@@ -4,9 +4,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace App05MonoGame
 {
+    public enum GameStates
+    {
+        Playing, Paused
+    }
     /// <summary>
     /// This game creates a variety of sprites as an example.  
     /// There is no game to play yet. The spaceShip and the 
@@ -35,25 +43,70 @@ namespace App05MonoGame
         private SpriteFont calibriFont;
 
         private Texture2D backgroundImage;
+        private Texture2D cooperCoinSheet;
+        private Texture2D silverCoinSheet;
+        private Texture2D goldCoinSheet;
+        private Texture2D healthTexture;
+
+        private Rectangle healthRectangle;
+        private Rectangle projectileRectangle;
+
         private SoundEffect flameEffect;
+        private Random rand;
 
         private readonly CoinsController coinsController;
 
         private PlayerSprite shipSprite;
-        private Sprite asteroidSprite;
+        private List<Sprite> projectiles;
+        private List<Sprite> colidableSprites;        
+        private List<Texture2D> asteroids;
 
-        private AnimatedPlayer playerSprite;
-        private AnimatedSprite enemySprite;
+        private Dictionary<Texture2D, int> coins;
+        private Dictionary<Texture2D, int> ammunition;
+        private Dictionary<Texture2D, Rectangle> GUI;
+        private Dictionary<Texture2D, int> upgradeRequirements;
+
+        private Projectile projectile;
+        private MouseState pastMouse;        
+        private MouseState mouse;
+        private GameStates gameState;
+        private Rectangle mouseRect;
+        private SoundEffect upgradeEffect;
+        private SoundEffect reloadEffect;
+        private SoundEffect gameOverEffect;
+        private Vector2 stringPossition;
 
         private int score;
         private int health;
+        private int maxHealth;
+        private float timer = 0;
+        private float stringTimer = 0;
+        private bool gameOver;
+        private int ammoToIncrease = 20;
+        private bool IsPlaying = true;
+        private bool hasUpgraded = false;
+
         public App05Game()
         {
             graphicsManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
+            rand = new Random();
+            mouse = Mouse.GetState();
+
             coinsController = new CoinsController();
+            projectiles = new List<Sprite>();
+            colidableSprites = new List<Sprite>();
+            asteroids = new List<Texture2D>();
+
+            ammunition = new Dictionary<Texture2D, int>();            
+            coins = new Dictionary<Texture2D, int>();
+            GUI = new Dictionary<Texture2D, Rectangle>();
+            upgradeRequirements = new Dictionary<Texture2D, int>();            
+
+            projectileRectangle = new Rectangle(30, 10, 50, 50);
+            mouseRect = new Rectangle(mouse.X, mouse.Y, 1, 1);            
         }
 
         /// <summary>
@@ -70,8 +123,8 @@ namespace App05MonoGame
             graphicsDevice = graphicsManager.GraphicsDevice;
 
             score = 0;
-            health = 100;
-
+            health = maxHealth = 1000;
+            gameState = GameStates.Playing;
             base.Initialize();
         }
 
@@ -82,14 +135,21 @@ namespace App05MonoGame
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            backgroundImage = Content.Load<Texture2D>(
-                "backgrounds/green_background720p");
+            backgroundImage = Content.Load<Texture2D>("backgrounds/bg58");
+            healthTexture = Content.Load<Texture2D>("Actors/healthTexture");
+
+            LoadCoins();
+            LoadAsteroids();
+            LoadAmmunition();
+            LoadShips();
 
             // Load Music and SoundEffects
-
             SoundController.LoadContent(Content);
             SoundController.PlaySong("Adventure");
             flameEffect = SoundController.GetSoundEffect("Flame");
+            upgradeEffect = SoundController.GetSoundEffect("upgrade");
+            reloadEffect = SoundController.GetSoundEffect("reload");
+            gameOverEffect = SoundController.GetSoundEffect("gameover");
 
             // Load Fonts
 
@@ -100,14 +160,86 @@ namespace App05MonoGame
 
             SetupSpaceShip();
             SetupAsteroid();
+            LoadGUI();
+        }
 
-            // animated sprites suitable for pacman type game
+        private void LoadShips()
+        {
+            int requirement = 0;
+            int increase = 5000;
 
-            SetupAnimatedPlayer();
-            SetupEnemy();
+            for (int i = 1; i < 13; i++)
+            {       
+                upgradeRequirements.Add(Content.Load<Texture2D>("Actors/ship" + i), requirement);
+                requirement += increase;
+            }
+        }
 
-            Texture2D coinSheet = Content.Load<Texture2D>("Actors/coin_copper");
-            coinsController.CreateCoin(graphicsDevice, coinSheet);
+        /// <summary>
+        /// Load GUI objects in the dictionary.
+        /// </summary>
+        private void LoadGUI()
+        {
+            int squareSize = 50;
+            int YPos = 10;
+
+            Texture2D pause = Content.Load<Texture2D>("Actors/pause");
+            Rectangle pauseRect = new Rectangle(HD_Width - squareSize, YPos, squareSize, squareSize);
+            Texture2D play = Content.Load<Texture2D>("Actors/play");
+            Rectangle playRect = new Rectangle(HD_Width - squareSize, YPos, squareSize, squareSize);
+            Texture2D sound = Content.Load<Texture2D>("Actors/sound");
+            Rectangle soundRect = new Rectangle(HD_Width - 2 * squareSize, YPos, squareSize, squareSize);
+            Texture2D soundMute = Content.Load<Texture2D>("Actors/soundMute");
+            Rectangle soundMuteRect = new Rectangle(HD_Width - 2 * squareSize, YPos, squareSize, squareSize);
+            Texture2D star = Content.Load<Texture2D>("Actors/star");
+            Rectangle starRect = new Rectangle(4 * squareSize, YPos, squareSize, squareSize);
+            Texture2D healthIcon = Content.Load<Texture2D>("Actors/health");
+            Rectangle healthRect = new Rectangle(HD_Width/2 - health/2,HD_Height - 2*squareSize, squareSize, squareSize);
+
+            GUI.Add(pause, pauseRect);
+            GUI.Add(play, playRect);
+            GUI.Add(sound, soundRect);
+            GUI.Add(soundMute, soundMuteRect);
+            GUI.Add(star, starRect);
+            GUI.Add(healthIcon, healthRect);
+            GUI.Add(healthTexture, new Rectangle(0, 0, 0, 0));
+        }
+
+        /// <summary>
+        /// Load al the ammunition images in the ammunition dictionary
+        /// along with the damage they can inflict.
+        /// </summary>
+        private void LoadAmmunition()
+        {
+            int damageMultiplier = 10;
+
+            for (int i = 1; i < 8; i++)
+            {
+                ammunition.Add(Content.Load<Texture2D>("Actors/ammo" + i), damageMultiplier * i);
+            }
+        }
+        /// <summary>
+        /// Load all the asteroids images in the list.
+        /// </summary>
+        private void LoadAsteroids()
+        {
+            for (int i = 1; i < 28; i++)
+            {
+                asteroids.Add(Content.Load<Texture2D>("Actors/Stones2Filled_" + i));
+            }
+        }
+        /// <summary>
+        /// Load all the coin images along with their value.
+        /// </summary>
+        private void LoadCoins()
+        {
+            cooperCoinSheet = Content.Load<Texture2D>("Actors/coin_copper");
+            silverCoinSheet = Content.Load<Texture2D>("Actors/coin_silver");
+            goldCoinSheet = Content.Load<Texture2D>("Actors/coin_gold");
+
+            coins.Add(cooperCoinSheet, (int)CoinColours.Copper) ;
+            coins.Add(silverCoinSheet, (int)CoinColours.Silver);
+            coins.Add(goldCoinSheet, (int)CoinColours.Gold);
         }
 
         /// <summary>
@@ -115,20 +247,20 @@ namespace App05MonoGame
         /// and move at a constant speed in a fixed direction
         /// </summary>
         private void SetupAsteroid()
-        {
-            Texture2D asteroid = Content.Load<Texture2D>(
-               "Actors/Stones2Filled_01");
+        {               
+            Texture2D asteroid = asteroids[rand.Next(0, 27)];
 
-            asteroidSprite = new Sprite(asteroid, 1200, 500)
+            colidableSprites.Add(new Sprite(asteroid, HD_Width, rand.Next(asteroid.Height/2, HD_Height - asteroid.Height/2))
             {
                 Direction = new Vector2(-1, 0),
                 Speed = 100,
 
                 Rotation = MathHelper.ToRadians(3),
                 RotationSpeed = 2f,
-            };
 
-    }
+                Health = 100
+            });
+        }
 
         /// <summary>
         /// This is a Sprite that can be controlled by a
@@ -139,74 +271,17 @@ namespace App05MonoGame
         {
             Texture2D ship = Content.Load<Texture2D>(
                "Actors/GreenShip");
+            projectile = new Projectile(Content.Load<Texture2D>("Actors/lunar_0001"),
+                        200, 300);
 
-            shipSprite = new PlayerSprite(ship, 200, 500)
+            shipSprite = new PlayerSprite(upgradeRequirements.ElementAt(0).Key, 200, 500)
             {
                 Direction = new Vector2(1, 0),
                 Speed = 200,
-                DirectionControl = DirectionControl.Rotational
-            };
-    }
-
-
-        /// <summary>
-        /// This is a Sprite with four animations for the four
-        /// directions, up, down, left and right
-        /// </summary>
-        private void SetupAnimatedPlayer()
-        {
-            Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet1");
-
-            AnimationController manager = new AnimationController(graphicsDevice, sheet4x3, 4, 3);
-
-            string[] keys = new string[] { "Down", "Left", "Right", "Up" };
-            manager.CreateAnimationGroup(keys);
-
-            playerSprite = new AnimatedPlayer()
-            {
-                CanWalk = true,
-                Scale = 2.0f,
-
-                Position = new Vector2(200, 200),
-                Speed = 200,
-                Direction = new Vector2(1, 0),
-
-                Rotation = MathHelper.ToRadians(0),
-                RotationSpeed = 0f
-            };
-
-            manager.AppendAnimationsTo(playerSprite);
+                DirectionControl = DirectionControl.Rotational,
+                Projectile = projectile
+            };            
         }
-
-        /// <summary>
-        /// This is an enemy Sprite with four animations for the four
-        /// directions, up, down, left and right.  Has no intelligence!
-        /// </summary>
-        private void SetupEnemy()
-        {
-            Texture2D sheet4x3 = Content.Load<Texture2D>("Actors/rsc-sprite-sheet3");
-
-            AnimationController manager = new AnimationController(graphicsDevice, sheet4x3, 4, 3);
-
-            string[] keys = new string[] { "Down", "Left", "Right", "Up" };
-
-            manager.CreateAnimationGroup(keys);
-
-            enemySprite = new AnimatedSprite()
-            {
-                Scale = 2.0f,
-
-                Position = new Vector2(1000, 200),
-                Direction = new Vector2(-1, 0),
-                Speed = 50,
-
-                Rotation = MathHelper.ToRadians(0),
-            };
-
-            manager.AppendAnimationsTo(enemySprite);
-            enemySprite.PlayAnimation("Left");
-        }
-
 
         /// <summary>
         /// Called 60 frames/per second and updates the positions
@@ -218,39 +293,380 @@ namespace App05MonoGame
         /// </param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || 
-                Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
+            mouse = Mouse.GetState();
+            mouseRect = new Rectangle(mouse.X, mouse.Y, 1, 1);
 
-            // Update Asteroids
-
-            shipSprite.Update(gameTime);
-            asteroidSprite.Update(gameTime);
-
-            if (shipSprite.HasCollided(asteroidSprite) && shipSprite.IsAlive)
+            ValidateGame();
+            ValidateSound();
+            
+            if (gameState == GameStates.Playing)
             {
-                flameEffect.Play();
+                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                stringTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                    Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
+
+                // Update Asteroids
+                if (!gameOver)
+                    shipSprite.Update(gameTime, projectiles);
+
+                if (timer > 2)
+                {
+                    SetupAsteroid();
+
+                    if (health >= maxHealth)
+                        health = maxHealth;
+                    else
+                        health++;
+
+                    timer = 0;
+                }
+
+                if (UpgradeShip())
+                {
+                    hasUpgraded = true;
+                    stringTimer = 0;
+                    stringPossition = new Vector2(HD_Width / 2 - arialFont.MeasureString("Upgrade Ship!").X / 2, HD_Height / 2);
+                }
+
+                coinsController.Update(gameTime, projectiles);
+                score += coinsController.HasCollided(shipSprite);
+                UpdateSprites(gameTime);
+                CheckCollisionWithSprites();
+                CheckScreenCollision();
+                UpdateDynamicIcons();
+            }
+            pastMouse = mouse;
+
+            base.Update(gameTime);
+        }
+        /// <summary>
+        /// Change the ship image.
+        /// </summary>
+        private bool UpgradeShip()
+        {
+            Texture2D image = shipSprite.Image;
+
+            for (int i = 0; i < upgradeRequirements.Count; i++)
+            {
+                if (score >= upgradeRequirements.ElementAt(i).Value)
+                {
+                    shipSprite.Image = upgradeRequirements.ElementAt(i).Key;                    
+                }
+            }
+            shipSprite.Origin = new Vector2(shipSprite.Image.Width/2, shipSprite.Image.Height/2);
+
+            if (image != shipSprite.Image)
+            {
+                upgradeEffect.Play();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Pause or Resume the game
+        /// </summary>
+        private void ValidateGame()
+        {
+            if (mouseRect.Intersects(GUI.ElementAt(0).Value) && (mouse.LeftButton == ButtonState.Pressed &&
+                pastMouse.LeftButton == ButtonState.Released))
+            {
+                if (gameState == GameStates.Playing)
+                {
+                    gameState = GameStates.Paused;
+                    IsPlaying = false;
+                }
+                else
+                {
+                    gameState = GameStates.Playing;
+                    IsPlaying = true;
+                }
+            }
+        }
+        /// <summary>
+        /// Mute or unmute the sound.
+        /// </summary>
+        private void ValidateSound()
+        {
+            if (mouseRect.Intersects(GUI.ElementAt(2).Value) && (mouse.LeftButton == ButtonState.Pressed &&
+                pastMouse.LeftButton == ButtonState.Released))
+            {
+                if (MediaPlayer.IsMuted)
+                    MediaPlayer.IsMuted = false;
+                else
+                {
+                    MediaPlayer.IsMuted = true;
+                }
+            }
+        }
+        /// <summary>
+        /// Update dynamic icons such as the health bar.
+        /// </summary>
+        private void UpdateDynamicIcons()
+        {
+            int healthIconIndex = 5;
+
+            healthRectangle = new Rectangle((int)GUI.ElementAt(healthIconIndex).Value.X + 50, 
+                (int)GUI.ElementAt(healthIconIndex).Value.Y, health, GUI.ElementAt(healthIconIndex).Value.Height);
+            GUI[healthTexture] =  healthRectangle;
+        }
+
+        /// <summary>
+        /// Validate the player's collision with the screen edges.
+        /// </summary>
+        private void CheckScreenCollision()
+        {
+            float distanceYBottom = shipSprite.Position.Y + shipSprite.Image.Height / 2;
+            float distanceYTop = shipSprite.Position.Y - shipSprite.Image.Height / 2;
+            float distanceXRight = shipSprite.Position.X + shipSprite.Image.Width / 2;
+            float distanceXLeft = shipSprite.Position.X - shipSprite.Image.Width / 2;
+
+            if (distanceXLeft <= 0)
+                shipSprite.Position = new Vector2(shipSprite.Image.Width / 2, shipSprite.Position.Y);
+            if (distanceXRight >= HD_Width)
+                shipSprite.Position = new Vector2(HD_Width - shipSprite.Image.Width / 2, shipSprite.Position.Y);
+            if (distanceYTop <= 0)
+                shipSprite.Position = new Vector2(shipSprite.Position.X, shipSprite.Image.Height / 2);
+            if (distanceYBottom >= HD_Height)
+                shipSprite.Position = new Vector2(shipSprite.Position.X, HD_Height - shipSprite.Image.Height / 2);
+        }
+        /// <summary>
+        /// Validate collision for asteroids.
+        /// </summary>
+        private void CheckCollisionWithSprites()
+        {
+            for (int j = 0; j < colidableSprites.Count; j++)
+            {
+                CheckAsteroidCollision(j);
+            }
+        }
+        /// <summary>
+        /// Validate collision between player ship and a colidable sprite.
+        /// If a colidable sprite is type ammunition, increase ammunition. 
+        /// </summary>
+        /// <param name="j"></param>
+        private void CheckAsteroidCollision(int j)
+        {
+            if (!ammunition.ContainsKey(colidableSprites[j].Image))
+            {
+                if (shipSprite.HasCollided(colidableSprites[j]) && shipSprite.IsAlive &&
+                    colidableSprites[j].IsAlive)
+                {
+                    flameEffect.Play();
+                    colidableSprites[j].IsAlive = false;
+                    colidableSprites[j].IsActive = false;
+                    colidableSprites[j].IsVisible = false;
+
+                    health -= colidableSprites[j].Health;
+                    ValidatePlayerHealth();
+                }
+            }            
+            else
+                AddAmmo(j);
+        }
+        /// <summary>
+        /// Validate the player ship health.
+        /// </summary>
+        private void ValidatePlayerHealth()
+        {
+            if (health <= 0)
+            {
+                health = 0;
 
                 shipSprite.IsActive = false;
                 shipSprite.IsAlive = false;
                 shipSprite.IsVisible = false;
+
+                gameOver = true;
+                gameOverEffect.Play();
             }
-
-            // Update Chase Game
-
-            playerSprite.Update(gameTime);
-            enemySprite.Update(gameTime);
-
-            if (playerSprite.HasCollided(enemySprite))
+        }
+        /// <summary>
+        /// Add ammo to player.
+        /// </summary>
+        /// <param name="j"></param>
+        private void AddAmmo(int j)
+        {
+            if (ammunition.ContainsKey(colidableSprites[j].Image)
+                            && colidableSprites[j].BoundingBox.Intersects(shipSprite.BoundingBox))
             {
-                playerSprite.IsActive = false;
-                playerSprite.IsAlive = false;
-                enemySprite.IsActive = false;
+                ChangeProjectileImage(j);
+                SetRotatebleProjectile(j);
+                if(colidableSprites[j].IsAlive)
+                    reloadEffect.Play();
+
+                colidableSprites[j].IsAlive = false;
+                colidableSprites[j].IsActive = false;
+                colidableSprites[j].IsVisible = false; 
             }
+        }
+        /// <summary>
+        /// Change the projectile image on collision with the projectile 
+        /// and increase the projectile amount.
+        /// </summary>
+        /// <param name="j"></param>
+        private void ChangeProjectileImage(int j)
+        {
+            if (colidableSprites[j].IsAlive)
+                shipSprite.Ammo += ammoToIncrease;
 
-            coinsController.Update(gameTime);
-            coinsController.HasCollided(playerSprite);
+            projectile.Image = colidableSprites[j].Image;
+            projectile.Damage = ammunition[colidableSprites[j].Image];
+        }
+        /// <summary>
+        /// Some of the projectiles require spinning.
+        /// Set the rotation speed for this projectiles.
+        /// </summary>
+        /// <param name="j">projectile</param>
+        private void SetRotatebleProjectile(int j)
+        {
+            int startIndex = 4;
 
-            base.Update(gameTime);
+            for (int i = startIndex; i < ammunition.Count; i++)
+            {
+                if (ammunition.ElementAt(i).Key == colidableSprites[j].Image)
+                {
+                    projectile.RotationSpeed = 20;
+
+                    i = ammunition.Count + 1;
+                }
+                else
+                    projectile.RotationSpeed = 0;
+            }
+        }
+        /// <summary>
+        /// Update sprite list.
+        /// </summary>
+        private void UpdateSprites(GameTime gameTime)
+        {
+            foreach (var sprite in projectiles.ToArray())
+                sprite.Update(gameTime, projectiles);
+
+            foreach (var sprite in colidableSprites.ToArray())
+                sprite.Update(gameTime, projectiles);
+            
+            PostUpdateSprites();
+        }
+        /// <summary>
+        /// Check for collision between projectiles and other sprites.
+        /// </summary>
+        private void PostUpdateSprites()
+        {
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                for (int j = 0; j < colidableSprites.Count; j++)
+                {
+                    try
+                    {
+                        CheckSpritesCollision(i, j);
+                        RemoveSprites(i, j);
+                        RemoveOffScreenAsteroids(j);
+                    }
+                    catch (Exception) { }
+                }
+            }
+        }
+        /// <summary>
+        /// Remove asteroids that leave the screen.
+        /// </summary>
+        /// <param name="j"></param>
+        private void RemoveOffScreenAsteroids(int j)
+        {
+            if (colidableSprites[j].Position.X < 0 - colidableSprites[j].Image.Width)
+            {
+                colidableSprites[j].IsAlive = false;
+            }
+        }
+        /// <summary>
+        /// Remove projectiles that expired.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        private void RemoveSprites(int i, int j)
+        {
+            if (!projectiles[i].IsAlive)
+                projectiles.RemoveAt(i);
+
+            SpawnCoins(j);
+        }
+        /// <summary>
+        /// Spawn coins when asteroids are destroyed.
+        /// </summary>
+        /// <param name="j"></param>
+        private void SpawnCoins(int j)
+        {
+            int chance = 100;
+            int chanceForCoins = 20;
+
+            if (!colidableSprites[j].IsAlive)
+            {
+                int x = rand.Next(0, chance);
+                if (x <= chanceForCoins)
+                {
+                    int index = rand.Next(0, coins.Count + 1);
+                    coinsController.CreateCoin(graphicsDevice, coins.ElementAt(index).Key,
+                        colidableSprites[j].Position, coins.ElementAt(index).Value);
+                }
+                colidableSprites.RemoveAt(j);
+            }
+        }
+        /// <summary>
+        /// Check collision between a projectile and an asteroid.
+        /// </summary>
+        /// <param name="i">index of projectile.</param>
+        /// <param name="j">index of asteroid</param>
+        private void CheckSpritesCollision(int i, int j)
+        {
+            if (projectiles[i].BoundingBox.Intersects(colidableSprites[j].BoundingBox)
+                && colidableSprites[j].IsAlive)
+            {
+                if (ammunition.ContainsKey(colidableSprites[j].Image))
+                    return;
+
+                colidableSprites[j].Health -= projectiles[i].Damage;
+                projectiles[i].IsAlive = false;
+                ValidateAsteroidHealth(j);
+            }
+        }
+        /// <summary>
+        /// Verify and update the health of an asteroid.
+        /// </summary>
+        /// <param name="j">index of asteroid</param>
+        private void ValidateAsteroidHealth(int j)
+        {
+            int max = 100;
+            int chanceForAmmo = 70;
+
+            if (colidableSprites[j].Health <= 0 && rand.Next(0, max) <= chanceForAmmo)
+            {
+                colidableSprites[j].IsAlive = false;
+
+                score += 500;
+            }
+            else 
+                SpawnAmmo(j);
+        }
+        /// <summary>
+        /// Spawn random ammo where the asteroid died.
+        /// </summary>
+        /// <param name="j"></param>
+        private void SpawnAmmo(int j)
+        {
+            int x = rand.Next(0, 100);
+
+            if (colidableSprites[j].Health <= 0)
+            {
+                int index = rand.Next(0, ammunition.Count + 1);
+
+                colidableSprites[j].Image = ammunition.ElementAt(index).Key;
+                colidableSprites[j].Rotation = 0f;
+                colidableSprites[j].Origin = new Vector2(colidableSprites[j].Image.Width / 2,
+                    colidableSprites[j].Image.Height / 2);
+            }
         }
 
         /// <summary>
@@ -263,24 +679,77 @@ namespace App05MonoGame
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(backgroundImage, Vector2.Zero, Color.White);
+            spriteBatch.Draw(backgroundImage, new Rectangle(0, 0, HD_Width, HD_Height), Color.White);
 
             // Draw asteroids game
-
+            foreach (var sprite in projectiles)
+                sprite.Draw(spriteBatch);
+            DrawAsteroidHealth();
             shipSprite.Draw(spriteBatch);
-            asteroidSprite.Draw(spriteBatch);
-
-            // Draw Chase game
-
-            playerSprite.Draw(spriteBatch);
             coinsController.Draw(spriteBatch);
-            enemySprite.Draw(spriteBatch);
 
             DrawGameStatus(spriteBatch);
             DrawGameFooter(spriteBatch);
+            DrawGameOverMessage(spriteBatch);
+            DrawGameStatusMessage(spriteBatch);
+            DrawUpgradeMessage(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void DrawGameOverMessage(SpriteBatch spriteBatch)
+        {
+            if (gameOver)
+            {
+                spriteBatch.DrawString(arialFont, "Game Over!",
+                    new Vector2(HD_Width / 2 - arialFont.MeasureString("Game Over!").X / 2, HD_Height / 2),
+                    Color.White);
+
+                MediaPlayer.IsMuted = true;
+            }
+        }
+
+        private void DrawGameStatusMessage(SpriteBatch spriteBatch)
+        {
+            if (!IsPlaying)
+            {
+                spriteBatch.DrawString(arialFont, "Game Paused!",
+                    new Vector2(HD_Width / 2 - arialFont.MeasureString("Game Paused!").X / 2, HD_Height / 2),
+                    Color.White);
+            }
+        }
+
+        private void DrawUpgradeMessage(SpriteBatch spriteBatch)
+        {
+            if (hasUpgraded)
+            {
+                if (stringTimer <= 2)
+                {
+                    spriteBatch.DrawString(arialFont, "Upgrade Ship!",
+                        stringPossition, Color.White);
+
+                    stringPossition += new Vector2(0, -1.5f);
+                }
+                else
+                    hasUpgraded = false;
+            }
+        }
+
+        private void DrawAsteroidHealth()
+        {
+            foreach (var sprite in colidableSprites)
+            {
+                sprite.Draw(spriteBatch);
+
+                if (!ammunition.ContainsKey(sprite.Image) && sprite.IsAlive)
+                {
+                    Rectangle asteroidRectangle = new Rectangle((int)sprite.Position.X - healthTexture.Width / 2,
+                        (int)sprite.Position.Y, sprite.Health, 10);
+
+                    spriteBatch.Draw(healthTexture, asteroidRectangle, Color.White);
+                }
+            }
         }
 
         /// <summary>
@@ -289,21 +758,44 @@ namespace App05MonoGame
         /// </summary>
         public void DrawGameStatus(SpriteBatch spriteBatch)
         {
-            Vector2 topLeft = new Vector2(4, 4);
-            string status = $"Score = {score:##0}";
-
-            spriteBatch.DrawString(arialFont, status, topLeft, Color.White);
-
-            string game = "Coin Chase";
+            string game = "Space Invaders";
             Vector2 gameSize = arialFont.MeasureString(game);
-            Vector2 topCentre = new Vector2((HD_Width/2 - gameSize.X/2), 4);
+            Vector2 topCentre = new Vector2((HD_Width / 2 - gameSize.X / 2), 4);
             spriteBatch.DrawString(arialFont, game, topCentre, Color.White);
 
-            string healthText = $"Health = {health}%";
-            Vector2 healthSize = arialFont.MeasureString(healthText);
-            Vector2 topRight = new Vector2(HD_Width - (healthSize.X + 4), 4);
-            spriteBatch.DrawString(arialFont, healthText, topRight, Color.White);
+            DrawGUI(spriteBatch);
+        }
 
+        private void DrawGUI(SpriteBatch spriteBatch)
+        {
+            int star = 4;
+            int sound = 2;
+
+            for (int i = 0; i < GUI.Count; i++)
+            {               
+                var colour = Color.Gold;
+
+                if (i == 0 && gameState == GameStates.Paused)
+                    continue;
+                if (i == 1 && gameState == GameStates.Playing)
+                    continue;
+                if (i == sound && MediaPlayer.IsMuted)
+                    continue;
+                if (i == sound + 1 && !MediaPlayer.IsMuted)
+                    continue;
+
+                if (i != star)
+                    colour = Color.Red;
+
+                spriteBatch.Draw(GUI.ElementAt(i).Key, GUI.ElementAt(i).Value, colour);
+            }
+            spriteBatch.Draw(projectile.Image, projectileRectangle, Color.White);
+            spriteBatch.DrawString(arialFont, $"{score}",
+                new Vector2(GUI.ElementAt(star).Value.X + GUI.ElementAt(star).Value.Width + 10, GUI.ElementAt(star).Key.Height / 2),
+                Color.White);
+            spriteBatch.DrawString(arialFont, $"{shipSprite.Ammo}", new Vector2(
+                projectileRectangle.X + projectileRectangle.Width + 10, projectileRectangle.Height / 2),
+                Color.White);
         }
 
         /// <summary>
@@ -328,6 +820,6 @@ namespace App05MonoGame
             spriteBatch.DrawString(calibriFont, names, bottomCentre, Color.Yellow);
             spriteBatch.DrawString(calibriFont, module, bottomLeft, Color.Yellow);
             spriteBatch.DrawString(calibriFont, app, bottomRight, Color.Yellow);
-        }
+        }        
     }
 }

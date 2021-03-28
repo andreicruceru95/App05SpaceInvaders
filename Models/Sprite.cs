@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace App05MonoGame.Models
 {
@@ -45,6 +46,8 @@ namespace App05MonoGame.Models
         public bool IsAlive { get; set; }
 
         public bool IsActive { get; set; }
+        public int Health { get; set; } = 0;
+        public int Damage { get; set; } = 10;
 
         public int Width
         {
@@ -120,11 +123,8 @@ namespace App05MonoGame.Models
 
             return false;
         }
-        /// <summary>
-        /// Update Sprite objects
-        /// </summary>
-        /// <param name="gameTime"></param>
-        public virtual void Update(GameTime gameTime)
+
+        public virtual void Update(GameTime gameTime, List<Sprite> sprites)
         {
             deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -173,6 +173,5 @@ namespace App05MonoGame.Models
         {
             return this.MemberwiseClone();
         }
-
     }
 }

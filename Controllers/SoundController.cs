@@ -30,6 +30,10 @@ namespace App05MonoGame.Controllers
 
             SoundEffects.Add("Coin", content.Load<SoundEffect>("Sounds/Coins"));
             SoundEffects.Add("Flame", content.Load<SoundEffect>("Sounds/flame"));
+            SoundEffects.Add("Laser", content.Load<SoundEffect>("Sounds/laser"));
+            SoundEffects.Add("reload", content.Load<SoundEffect>("Sounds/reload"));
+            SoundEffects.Add("upgrade", content.Load<SoundEffect>("Sounds/upgrade"));
+            SoundEffects.Add("gameover", content.Load<SoundEffect>("Sounds/gameover"));
         }
         /// <summary>
         /// Get a sound effect from the collection.

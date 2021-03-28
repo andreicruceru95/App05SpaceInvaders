@@ -20,23 +20,24 @@ namespace App05MonoGame.Models
         public Dictionary<string, Animation> Animations { get; set; }
 
         public Animation Animation { get; set; }
+        public int Value { get; set; } = 0;
 
-        private Rectangle sourceRectangle;
+        private Rectangle sourceRectangle;        
 
         public AnimatedSprite() : base()
-        {            
+        {
         }
 
         public void PlayAnimation(string key)
         {
-            if(Animations != null && Animations.ContainsKey(key))
+            if (Animations != null && Animations.ContainsKey(key))
             {
                 Animation = Animations[key];
                 Animation.Start();
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
             //added a default frame for when the sprite is not active
             sourceRectangle = new Rectangle(0, 0, Width, Height);
@@ -46,7 +47,7 @@ namespace App05MonoGame.Models
                 sourceRectangle = Animation.Update(gameTime);
             }
 
-            base.Update(gameTime);
+            base.Update(gameTime, sprites);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -62,8 +63,8 @@ namespace App05MonoGame.Models
                          Color.White, Rotation, Origin,
                          Scale, SpriteEffects.None, 1);
             }
-            else  
-                base.Draw(spriteBatch); 
+            else
+                base.Draw(spriteBatch);
         }
     }
 }

@@ -23,7 +23,8 @@ namespace App05MonoGame.Controllers
 
                 TurnLeft = Keys.A,
                 TurnRight = Keys.D,
-                Forward = Keys.Space
+                Forward = Keys.W,
+                Shoot = Keys.Space
             };
         }
 

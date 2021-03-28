@@ -55,14 +55,14 @@ namespace App05MonoGame.Controllers
             frameHeight = sheet.Height / rows;
             sheetWidth = SpriteSheet.Width;
             frameWidth = sheetWidth / columns;
-            
+
             frameCount = columns;
             animationCount = rows;
 
             SpriteSheets = new Texture2D[animationCount];
             Animations = new Dictionary<string, Animation>();
 
-            if(rows > 1)
+            if (rows > 1)
                 CreateSheets();
             else
             {
@@ -99,7 +99,7 @@ namespace App05MonoGame.Controllers
             {
                 Animation animation = new Animation(
                     keyName, SpriteSheets[row - 1], frameCount);
-                
+
                 Animations.Add(keyName, animation);
 
                 if (firstKey == null)
@@ -113,7 +113,7 @@ namespace App05MonoGame.Controllers
         /// </summary>
         public void CreateAnimationGroup(string[] keyNames)
         {
-            if(keyNames.Length == animationCount)
+            if (keyNames.Length == animationCount)
             {
                 int row = 0;
                 foreach (string key in keyNames)
@@ -131,7 +131,7 @@ namespace App05MonoGame.Controllers
             if (sprite.Animations == null)
                 sprite.Animations = new Dictionary<string, Animation>();
 
-            foreach(var animation in Animations)
+            foreach (var animation in Animations)
             {
                 sprite.Animations.Add(animation.Key, animation.Value);
             }
@@ -141,7 +141,7 @@ namespace App05MonoGame.Controllers
                 sprite.PlayAnimation("Right");
             }
             else sprite.PlayAnimation(firstKey);
-            
+
             sprite.Image = FirstFrame;
         }
 
