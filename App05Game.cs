@@ -454,7 +454,7 @@ namespace App05MonoGame
             if (!ammunition.ContainsKey(colidableSprites[j].Image))
             {
                 if (shipSprite.HasCollided(colidableSprites[j]) && shipSprite.IsAlive &&
-                    colidableSprites[j].IsAlive)
+                    colidableSprites[j].IsAlive)                
                 {
                     flameEffect.Play();
                     colidableSprites[j].IsAlive = false;
