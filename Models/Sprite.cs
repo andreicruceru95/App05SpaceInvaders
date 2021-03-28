@@ -120,7 +120,10 @@ namespace App05MonoGame.Models
 
             return false;
         }
-
+        /// <summary>
+        /// Update Sprite objects
+        /// </summary>
+        /// <param name="gameTime"></param>
         public virtual void Update(GameTime gameTime)
         {
             deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
